@@ -44,6 +44,7 @@
   };
 
   const listeners = new Set();
+  const stateFilters = new Set();
 
   function notify() {
     listeners.forEach(listener => {
@@ -55,11 +56,23 @@
     return state;
   }
 
+  function applyStateFilters(partial) {
+    let nextPartial = partial;
+    stateFilters.forEach(filterFn => {
+      const maybeFiltered = filterFn(nextPartial, state);
+      if (maybeFiltered && typeof maybeFiltered === "object") {
+        nextPartial = maybeFiltered;
+      }
+    });
+    return nextPartial;
+  }
+
   function setState(partial) {
     if (!partial || typeof partial !== "object") {
       return state;
     }
-    Object.assign(state, partial);
+    const filteredPartial = applyStateFilters(partial);
+    Object.assign(state, filteredPartial);
     notify();
     return state;
   }
@@ -71,6 +84,16 @@
     listeners.add(listener);
     return function unsubscribe() {
       listeners.delete(listener);
+    };
+  }
+
+  function registerStateFilter(filterFn) {
+    if (typeof filterFn !== "function") {
+      return function noop() {};
+    }
+    stateFilters.add(filterFn);
+    return function unregisterStateFilter() {
+      stateFilters.delete(filterFn);
     };
   }
 
@@ -93,6 +116,7 @@
     bindStateAccess,
     getState,
     setState,
-    subscribe
+    subscribe,
+    registerStateFilter
   });
 })(window);

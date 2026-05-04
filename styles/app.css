@@ -988,3 +988,35 @@ body.mobile-mode .trophy-catalog-title{font-size:22px}
 body.mobile-mode .trophy-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 body.mobile-mode .trophy-catalog-item{min-height:164px;padding:12px}
 body.mobile-mode .trophy-catalog-thumb{width:68px;height:68px}
+
+
+/* Sprint DAE Verification readability enhancements */
+body.readable-ui {
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+body.readable-ui .topbar,
+body.readable-ui .panel,
+body.readable-ui .assistant-card,
+body.readable-ui .status-box,
+body.readable-ui .actions-grid button {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+body.readable-ui .toolbar-btn,
+body.readable-ui .action-btn,
+body.readable-ui .assistant-chip {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.scope-banner {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #e9f2ff;
+  color: #0b3a75;
+  border: 1px solid #b9d2f7;
+  font-weight: 600;
+}
