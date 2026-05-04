@@ -2,7 +2,7 @@
   "use strict";
 
   const storeApi = global.CoeurGoStore;
-  if (!storeApi || typeof storeApi.setState !== "function" || typeof storeApi.getState !== "function" || typeof storeApi.registerStateFilter !== "function") {
+  if (!storeApi || typeof storeApi.setState !== "function" || typeof storeApi.getState !== "function") {
     return;
   }
 
@@ -34,20 +34,22 @@
     return list.filter(matchesTargetArea);
   }
 
-  storeApi.registerStateFilter(partial => {
-    if (!partial || typeof partial !== "object") {
-      return partial;
-    }
+  if (typeof storeApi.registerStateFilter === "function") {
+    storeApi.registerStateFilter(partial => {
+      if (!partial || typeof partial !== "object") {
+        return partial;
+      }
 
-    const nextPartial = { ...partial };
-    if (Array.isArray(nextPartial.aeds)) {
-      nextPartial.aeds = filterAeds(nextPartial.aeds);
-    }
-    if (Array.isArray(nextPartial.nationalPreviewAeds)) {
-      nextPartial.nationalPreviewAeds = filterAeds(nextPartial.nationalPreviewAeds);
-    }
-    return nextPartial;
-  });
+      const nextPartial = { ...partial };
+      if (Array.isArray(nextPartial.aeds)) {
+        nextPartial.aeds = filterAeds(nextPartial.aeds);
+      }
+      if (Array.isArray(nextPartial.nationalPreviewAeds)) {
+        nextPartial.nationalPreviewAeds = filterAeds(nextPartial.nationalPreviewAeds);
+      }
+      return nextPartial;
+    });
+  }
 
   const currentState = storeApi.getState();
   storeApi.setState({
