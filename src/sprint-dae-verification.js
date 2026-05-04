@@ -34,6 +34,7 @@
     return list.filter(matchesTargetArea);
   }
 
+ codex/prepare-clean-environment-for-dae-sprint-drms8a
   function filterStorePartial(partial) {
     if (!partial || typeof partial !== "object") {
       return partial;
@@ -64,6 +65,25 @@
   applyCurrentState({
     aeds: currentState.aeds,
     nationalPreviewAeds: currentState.nationalPreviewAeds
+
+  const originalSetState = storeApi.setState;
+  storeApi.setState = function patchedSetState(partial) {
+    if (partial && typeof partial === "object") {
+      if (Array.isArray(partial.aeds)) {
+        partial.aeds = filterAeds(partial.aeds);
+      }
+      if (Array.isArray(partial.nationalPreviewAeds)) {
+        partial.nationalPreviewAeds = filterAeds(partial.nationalPreviewAeds);
+      }
+    }
+    return originalSetState(partial);
+  };
+
+  const currentState = storeApi.getState();
+  originalSetState({
+    aeds: filterAeds(currentState.aeds),
+    nationalPreviewAeds: filterAeds(currentState.nationalPreviewAeds)
+ main
   });
 
   global.addEventListener("DOMContentLoaded", () => {
