@@ -34,27 +34,36 @@
     return list.filter(matchesTargetArea);
   }
 
-  if (typeof storeApi.registerStateFilter === "function") {
-    storeApi.registerStateFilter(partial => {
-      if (!partial || typeof partial !== "object") {
-        return partial;
-      }
+  function filterStorePartial(partial) {
+    if (!partial || typeof partial !== "object") {
+      return partial;
+    }
 
-      const nextPartial = { ...partial };
-      if (Array.isArray(nextPartial.aeds)) {
-        nextPartial.aeds = filterAeds(nextPartial.aeds);
-      }
-      if (Array.isArray(nextPartial.nationalPreviewAeds)) {
-        nextPartial.nationalPreviewAeds = filterAeds(nextPartial.nationalPreviewAeds);
-      }
-      return nextPartial;
-    });
+    const nextPartial = { ...partial };
+    if (Array.isArray(nextPartial.aeds)) {
+      nextPartial.aeds = filterAeds(nextPartial.aeds);
+    }
+    if (Array.isArray(nextPartial.nationalPreviewAeds)) {
+      nextPartial.nationalPreviewAeds = filterAeds(nextPartial.nationalPreviewAeds);
+    }
+    return nextPartial;
+  }
+
+  let applyCurrentState = partial => storeApi.setState(partial);
+  if (typeof storeApi.registerStateFilter === "function") {
+    storeApi.registerStateFilter(filterStorePartial);
+  } else {
+    const originalSetState = storeApi.setState;
+    storeApi.setState = function patchedSetState(partial) {
+      return originalSetState(filterStorePartial(partial));
+    };
+    applyCurrentState = partial => originalSetState(filterStorePartial(partial));
   }
 
   const currentState = storeApi.getState();
-  storeApi.setState({
-    aeds: filterAeds(currentState.aeds),
-    nationalPreviewAeds: filterAeds(currentState.nationalPreviewAeds)
+  applyCurrentState({
+    aeds: currentState.aeds,
+    nationalPreviewAeds: currentState.nationalPreviewAeds
   });
 
   global.addEventListener("DOMContentLoaded", () => {
