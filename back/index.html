@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>❤ Coeur GO - Le jeu qui sauve des vies</title>
+<link rel="stylesheet" href="./styles/app.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-controls">
+    <div class="logo">CoeurGo<small>Missions DAE France</small></div>
+    <div class="header-actions">
+      <button class="toolbar-btn toolbar-btn-primary" id="gpsBtn" type="button">Me localiser</button>
+      <button class="toolbar-btn" id="viewRegionBtn" type="button">Vue France</button>
+      <button class="toolbar-btn toolbar-btn-danger" id="resetGameBtn" type="button">Reset</button>
+      <button class="toolbar-btn" id="openTrophyCatalogBtn" type="button">Catalogue</button>
+      <button class="toolbar-btn toolbar-btn-dae" id="topAddDaeBtn" type="button" disabled>Ajouter un DAE</button>
+      <button class="toolbar-btn toolbar-btn-remove" id="topRemoveDaeBtn" type="button" disabled>Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<div id="map"></div>
+
+<div class="mission-card-anchor">
+  <div class="mission-card" id="missionCard">
+    <div class="mission-card-content">
+      <div class="mission-card-kicker" id="missionKicker">Mission en cours</div>
+      <div class="mission-card-title" id="missionTitle">Chargement...</div>
+      <div class="mission-card-description" id="missionDescription">Initialisation de la carte...</div>
+    </div>
+    <div class="mission-card-footer">
+      <div class="mission-card-stat">
+        <div class="mission-card-stat-label">Distance</div>
+        <div class="mission-card-stat-value" id="missionDistance">--</div>
+      </div>
+      <div class="mission-card-stat">
+        <div class="mission-card-stat-label">Temps</div>
+        <div class="mission-card-stat-value" id="missionTime">--</div>
+      </div>
+      <div class="mission-card-stat">
+        <div class="mission-card-stat-label">Precision</div>
+        <div class="mission-card-stat-value" id="missionAccuracy">--</div>
+      </div>
+    </div>
+    <div class="mission-card-actions">
+      <button class="mission-btn mission-btn-primary" id="findBtn" type="button">Trouver</button>
+      <button class="mission-btn" id="photoBtn" type="button" disabled>Photo</button>
+      <button class="mission-btn" id="checkBtn" type="button" disabled>Controler</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { supabase } from './lib/supabaseClient.js';
+  window.supabase = supabase;
+</script>
+<script src="./store/index.js" defer></script>
+<script src="./src/events.js" defer></script>
+<script src="./src/app.js" defer></script>
+</body>
+</html>
