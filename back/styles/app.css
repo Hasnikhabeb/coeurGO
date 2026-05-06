@@ -702,6 +702,7 @@ body.mobile-mode .topbar-controls{display:grid;grid-template-columns:1fr;align-i
 body.mobile-mode .topline{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:stretch;gap:8px}
 .logo{font-size:28px;font-weight:900;letter-spacing:.02em}
 .logo small{display:block;margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.logo-commit{display:block;margin-top:4px;font-size:11px;letter-spacing:.04em;font-weight:700;color:#93c5fd}
 .header-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 body.mobile-mode .header-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));justify-content:stretch;gap:8px;width:100%}
 .toolbar-btn,.view-btn{border:none;border-radius:999px;font-weight:800;cursor:pointer}
@@ -878,6 +879,7 @@ body:not(.mobile-mode) .topbar{padding:8px 12px 6px}
 body:not(.mobile-mode) .topbar-controls{margin-bottom:6px}
 body:not(.mobile-mode) .logo{font-size:24px}
 body:not(.mobile-mode) .logo small{font-size:10px}
+body:not(.mobile-mode) .logo-commit{font-size:10px}
 body:not(.mobile-mode) .player-card{padding:8px 10px}
 body:not(.mobile-mode) .clock-card{padding:6px 10px;min-width:200px}
 body:not(.mobile-mode) .score{padding:7px 12px;font-size:16px}
@@ -925,6 +927,7 @@ body.mobile-mode .view-switch{grid-column:1/-1;display:grid;grid-template-column
 body.mobile-mode .view-btn{width:100%}
 body.mobile-mode .logo{font-size:24px}
 body.mobile-mode .logo small{font-size:10px;margin-top:2px}
+body.mobile-mode .logo-commit{font-size:10px;margin-top:2px}
 body.mobile-mode .brand-block{display:block;min-width:0}
 body.mobile-mode .clock-card{display:none}
 body.mobile-mode .hud-side{gap:6px}
