@@ -44,13 +44,13 @@
   function createViewRegionHandler(actions) {
     return function handleViewRegion() {
       actions.fitToFrance();
-      actions.showStatus("Vue France recentree.", "info");
+      actions.showStatus("Vue Vernon recentree.", "info");
     };
   }
 
   function createResetHandler(actions, hostWindow) {
     return function handleReset() {
-      if (hostWindow.confirm("Reinitialiser la progression France ?")) {
+      if (hostWindow.confirm("Reinitialiser la progression Vernon ?")) {
         actions.resetGame();
       }
     };
