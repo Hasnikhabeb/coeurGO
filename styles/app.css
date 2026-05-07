@@ -713,8 +713,11 @@ body.mobile-mode #map{left:50%;right:auto;width:min(410px,calc(100vw - 16px));tr
 .dae-popup-status--unavailable{background:rgba(244,63,94,.2);color:#ffe4e6}
 .dae-popup-status--available{background:rgba(245,158,11,.2);color:#ffedd5}
 .dae-popup-detail{font-size:12px;line-height:1.4;color:#cbd5e1}
+.dae-popup-actions{display:grid;grid-template-columns:1fr;gap:10px}
 .dae-popup-action{border:none;border-radius:16px;min-height:48px;padding:12px 14px;background:linear-gradient(180deg,#38bdf8 0%,#1d4ed8 100%);color:#fff;font-size:14px;font-weight:900;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .dae-popup-action:hover,.dae-popup-action:focus-visible{filter:brightness(1.05);outline:none}
+.dae-popup-action.is-secondary{background:rgba(15,23,42,.92);border:1px solid rgba(148,163,184,.22);color:#e2e8f0}
+.dae-popup-action:disabled{opacity:.62;cursor:not-allowed;filter:none}
 body.mobile-mode .leaflet-popup.cg-popup .leaflet-popup-content{min-width:0;width:min(286px,calc(100vw - 72px))}
 body.mobile-mode .dae-popup-card{padding:14px}
 body.mobile-mode .dae-popup-title{font-size:16px}

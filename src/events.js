@@ -48,14 +48,6 @@
     };
   }
 
-  function createResetHandler(actions, hostWindow) {
-    return function handleReset() {
-      if (hostWindow.confirm("Reinitialiser la progression Vernon ?")) {
-        actions.resetGame();
-      }
-    };
-  }
-
   function createChecklistChangeHandler(context, index) {
     return function handleChecklistChange(event) {
       const input = event.currentTarget;
@@ -121,7 +113,6 @@
     addDomListener(cleanups, refs.photoBtn, "click", actions.photoAED);
     addDomListener(cleanups, refs.gpsBtn, "click", actions.locatePlayer);
     addDomListener(cleanups, refs.viewRegionBtn, "click", createViewRegionHandler(actions));
-    addDomListener(cleanups, refs.resetGameBtn, "click", createResetHandler(actions, hostWindow));
     addDomListener(cleanups, refs.desktopViewBtn, "click", createSetModeHandler(actions, "desktop"));
     addDomListener(cleanups, refs.mobileViewBtn, "click", createSetModeHandler(actions, "mobile"));
     addDomListener(cleanups, refs.assistantNextBtn, "click", createAssistantHandler(actions, "next", "Etape suivante"));
