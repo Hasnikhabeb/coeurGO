@@ -3,7 +3,6 @@
 
   const state = {
     aeds: [],
-    nationalPreviewAeds: [],
     aedById: new Map(),
     verifiedIds: new Set(),
     photoNames: Object.create(null),

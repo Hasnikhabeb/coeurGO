@@ -6,7 +6,6 @@ if (!storeApi) {
 
 const STORE_STATE_KEYS = [
   "aeds",
-  "nationalPreviewAeds",
   "aedById",
   "verifiedIds",
   "photoNames",
@@ -67,13 +66,12 @@ const DAE_AI_TRAINING_DATA = [
 /* Leaflet bundled library */
 
 /* CoeurGo application */
-window.__COEURGO_FRANCE_APP_LOADED = true;
-const GAME_STORAGE_KEY = "coeurgo-france-simple-v1";
-const VIEW_STORAGE_KEY = "coeurgo-france-simple-view-v1";
+window.__COEURGO_VERNON_APP_LOADED = true;
+const GAME_STORAGE_KEY = "coeurgo-vernon-simple-v1";
+const VIEW_STORAGE_KEY = "coeurgo-vernon-simple-view-v1";
 const POINTS_PER_LEVEL = 50;
 const TOTAL_LEVELS = 100;
 const TROPHY_UNLOCK_STEP = 5;
-const FRANCE_BOUNDS = [[41.1, -5.8], [51.6, 9.8]];
 const VERNON_CENTER = { lat: 49.092, lng: 1.485 };
 const VERNON_VIEW_ZOOM = 14;
 const VERNON_FILTER_RADIUS_METERS = 5000;
@@ -84,14 +82,6 @@ const ROUTE_CACHE_LIMIT = 24;
 const ROUTE_REQUEST_TIMEOUT_MS = 12000;
 const PHOTO_MAX_SIZE_BYTES = 8 * 1024 * 1024;
 const ALLOWED_PHOTO_MIME_PREFIX = "image/";
-const FALLBACK_AEDS = [
-  { id: "paris-hotel-ville", lat: 48.8567, lng: 2.3519, name: "Hotel de Ville", address: "Place de l'Hotel de Ville", city: "Paris", postcode: "75004" },
-  { id: "lille-theatre", lat: 50.6369, lng: 3.0636, name: "Theatre du Nord", address: "4 Place du Theatre", city: "Lille", postcode: "59000" },
-  { id: "lyon-bellecour", lat: 45.7579, lng: 4.8321, name: "Place Bellecour", address: "Place Bellecour", city: "Lyon", postcode: "69002" },
-  { id: "marseille-vieux-port", lat: 43.2965, lng: 5.3698, name: "Vieux-Port", address: "Quai du Port", city: "Marseille", postcode: "13002" },
-  { id: "bordeaux-miroir", lat: 44.8411, lng: -0.5693, name: "Miroir d'eau", address: "Place de la Bourse", city: "Bordeaux", postcode: "33000" },
-  { id: "nantes-chateau", lat: 47.2162, lng: -1.5496, name: "Chateau des ducs", address: "4 Place Marc Elder", city: "Nantes", postcode: "44000" }
-];
 
 const levelFill = document.getElementById("levelFill");
 const levelValue = document.getElementById("levelValue");
@@ -513,10 +503,6 @@ function departmentLabel(postcode) {
   if (digits.startsWith("20")) return "Corse";
   if (digits.startsWith("97") || digits.startsWith("98")) return `Dept. ${digits.slice(0, 3)}`;
   return `Dept. ${digits.slice(0, 2)}`;
-}
-
-function isInsideFrance(lat, lng) {
-  return lat >= FRANCE_BOUNDS[0][0] && lat <= FRANCE_BOUNDS[1][0] && lng >= FRANCE_BOUNDS[0][1] && lng <= FRANCE_BOUNDS[1][1];
 }
 
 function formatCount(value) {
@@ -1227,11 +1213,10 @@ function getPendingCount() {
 }
 
 function normaliseCatalogAed(raw, index) {
-  raw.id = textValue(raw.id, `france-dae-${index + 1}`);
+  raw.id = textValue(raw.id, `vernon-dae-${index + 1}`);
   raw.lat = Number(raw.lat);
   raw.lng = Number(raw.lng);
   if (!Number.isFinite(raw.lat) || !Number.isFinite(raw.lng)) return null;
-  if (!isInsideFrance(raw.lat, raw.lng)) return null;
   raw.isCustom = Boolean(raw.isCustom);
   raw.name = textValue(raw.name, `DAE Vernon ${index + 1}`);
   raw.address = textValue(raw.address, "Adresse non renseignee");
@@ -1240,35 +1225,12 @@ function normaliseCatalogAed(raw, index) {
   raw.department = departmentLabel(raw.postcode);
   raw.functionState = textValue(raw.functionState, "Etat non renseigne");
   raw.validationLabel = textValue(raw.validationLabel, "en attente de validation");
-  raw.sourceLabel = textValue(raw.sourceLabel, raw.isCustom ? "Ajout terrain" : "GeoDAE / Data.gouv - France");
+  raw.sourceLabel = textValue(raw.sourceLabel, raw.isCustom ? "Ajout terrain" : "GeoDAE / Vernon");
   return raw;
 }
 
-function sampleByGrid(source, latStep, lngStep, maxPerCell, limit) {
-  const counts = new Map();
-  const sampled = [];
-  for (const aed of source) {
-    const row = Math.floor((aed.lat - FRANCE_BOUNDS[0][0]) / latStep);
-    const col = Math.floor((aed.lng - FRANCE_BOUNDS[0][1]) / lngStep);
-    const key = `${row}:${col}`;
-    const currentCount = counts.get(key) || 0;
-    if (currentCount >= maxPerCell) continue;
-    counts.set(key, currentCount + 1);
-    sampled.push(aed);
-    if (sampled.length >= limit) break;
-  }
-  return sampled;
-}
-
-function buildNationalPreview(source) {
-  const preview = sampleByGrid(source, 0.28, 0.34, 2, 1400);
-  return preview.length ? preview : source.slice(0, 1000);
-}
-
 function loadCatalog() {
-  const source = Array.isArray(window.PRELOADED_AEDS) && window.PRELOADED_AEDS.length
-    ? window.PRELOADED_AEDS
-    : FALLBACK_AEDS;
+  const source = Array.isArray(window.PRELOADED_AEDS) ? window.PRELOADED_AEDS : [];
   const normalised = [];
   for (let index = 0; index < source.length; index += 1) {
     const item = normaliseCatalogAed(source[index], index);
@@ -1276,7 +1238,6 @@ function loadCatalog() {
   }
   aeds = normalised.filter(isVernonAreaAed);
   aedById = new Map(aeds.map(aed => [aed.id, aed]));
-  nationalPreviewAeds = buildNationalPreview(aeds);
 }
 
 function appendCustomAeds(items) {
@@ -1293,7 +1254,6 @@ function appendCustomAeds(items) {
     aeds.push(item);
     aedById.set(item.id, item);
   }
-  nationalPreviewAeds = buildNationalPreview(aeds);
 }
 
 function loadGameState() {
@@ -1451,27 +1411,11 @@ function buildAedPopupContent(aed) {
 }
 
 function getViewportCandidates() {
-  const zoom = map.getZoom();
-  let candidates;
-  if (zoom <= 6) {
-    candidates = nationalPreviewAeds.slice();
-  } else {
-    const paddedBounds = map.getBounds().pad(0.22);
-    const inView = [];
-    for (const aed of aeds) {
-      if (paddedBounds.contains([aed.lat, aed.lng])) {
-        inView.push(aed);
-      }
-    }
-    if (zoom <= 8) {
-      candidates = sampleByGrid(inView, 0.12, 0.14, 1, 1600);
-    } else if (zoom <= 10) {
-      candidates = sampleByGrid(inView, 0.05, 0.06, 1, 2200);
-    } else if (inView.length > 2600) {
-      const step = Math.ceil(inView.length / 2600);
-      candidates = inView.filter((_, index) => index % step === 0);
-    } else {
-      candidates = inView;
+  const paddedBounds = map.getBounds().pad(0.22);
+  const candidates = [];
+  for (const aed of aeds) {
+    if (paddedBounds.contains([aed.lat, aed.lng])) {
+      candidates.push(aed);
     }
   }
   const currentAED = getCurrentAED();
@@ -1610,7 +1554,6 @@ function addMissingDae() {
   }
   aeds.push(customAED);
   aedById.set(customAED.id, customAED);
-  nationalPreviewAeds = buildNationalPreview(aeds);
   pendingCustomDaeLocation = null;
   queueVisibleMarkersRefresh();
   updateMissionCard();
@@ -1637,7 +1580,6 @@ function removeCurrentCustomDae() {
   delete photoNames[currentAED.id];
   aedById.delete(currentAED.id);
   aeds = aeds.filter(aed => aed.id !== currentAED.id);
-  nationalPreviewAeds = buildNationalPreview(aeds);
   currentAEDId = null;
   pendingPhotoAEDId = null;
   pendingCustomDaeLocation = null;
@@ -1683,7 +1625,7 @@ function queueVisibleMarkersRefresh() {
   });
 }
 
-function fitToFrance() {
+function fitToVernon() {
   if (!aeds.length) {
     map.setView([VERNON_CENTER.lat, VERNON_CENTER.lng], VERNON_VIEW_ZOOM);
     return;
@@ -2196,7 +2138,7 @@ function locatePlayer() {
     }
   }, () => {
     shouldFocusGuidanceLine = false;
-    showStatus("Position indisponible. Le mode France reste jouable sans GPS.", "info");
+    showStatus("Position indisponible. Le mode Vernon reste jouable sans GPS.", "info");
   }, geoOptions);
 }
 
@@ -2286,7 +2228,7 @@ function ensureCurrentMission({ focus = false, silent = false } = {}) {
     focusMissionView(nextAED);
   }
   if (!nextAED && focus) {
-    fitToFrance();
+    fitToVernon();
   }
   if (nextAED && !silent) {
     showStatus(`Mission prete : ${nextAED.name}.`, "info");
@@ -2305,7 +2247,7 @@ function selectNextAED() {
     showStatus(`Nouvelle mission prete : ${nextAED.name}.`, "success");
     return;
   }
-  fitToFrance();
+  fitToVernon();
   showStatus("Toutes les missions Vernon sont terminees. Consulte le catalogue ou explore la carte.", "success");
 }
 
@@ -2457,7 +2399,7 @@ function resetGame() {
   updateActionButtons();
   saveGameState();
   queueVisibleMarkersRefresh();
-  fitToFrance();
+  fitToVernon();
   showStatus("Session Vernon reinitialisee. Appuie sur Trouver pour repartir.", "info");
 }
 
@@ -2500,7 +2442,7 @@ function registerInteractionEvents() {
       closeChecklist,
       closeTrophyCatalog,
       findAED,
-      fitToFrance,
+      fitToVernon,
       handleAddDaeAction,
       handleMapClick,
       handlePhotoWithDaeAi,
@@ -2524,7 +2466,7 @@ function registerInteractionEvents() {
 loadCatalog();
 loadGameState();
 setHeaderMode(window.innerWidth < 900 ? "mobile" : normaliseViewMode(safeGetStorage(VIEW_STORAGE_KEY)));
-fitToFrance();
+fitToVernon();
 queueVisibleMarkersRefresh();
 prepareDaeAiTrainingSet();
 updateGpsButton();

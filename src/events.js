@@ -43,7 +43,7 @@
 
   function createViewRegionHandler(actions) {
     return function handleViewRegion() {
-      actions.fitToFrance();
+      actions.fitToVernon();
       actions.showStatus("Vue Vernon recentree.", "info");
     };
   }
