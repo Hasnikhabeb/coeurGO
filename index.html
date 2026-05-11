@@ -29,7 +29,7 @@
 </div>
 <div class="topbar">
   <div class="topbar-controls">
-    <div class="logo" aria-label="Logo CoeurGo dynamique"><span class="logo-dynamic-text">CoeurGo</span><small>MISSION DAE</small></div>
+    <div class="logo" aria-label="Logo CoeurGo dynamique"><span class="logo-dynamic-text">CoeurGo</span><small id="logoUpdateDate" data-commit-date="2026-05-11">Mise a jour: 2026-05-11</small></div>
     <div class="header-actions">
       <button class="toolbar-btn toolbar-btn-primary" id="gpsBtn" type="button">Me localiser</button>
       <button class="toolbar-btn" id="viewRegionBtn" type="button">Vue Vernon</button>
@@ -185,6 +185,27 @@
 
 <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
 
+<script>
+(() => {
+  const updateEl = document.getElementById("logoUpdateDate");
+  if (!updateEl) return;
+  const commitDate = updateEl.dataset.commitDate;
+  if (!commitDate) return;
+
+  const formatRelative = () => {
+    const commit = new Date(`${commitDate}T00:00:00Z`);
+    const now = new Date();
+    const diffMs = now - commit;
+    const dayMs = 24 * 60 * 60 * 1000;
+    const diffDays = Math.max(0, Math.floor(diffMs / dayMs));
+    if (diffDays === 0) return `Mise a jour: ${commitDate} (aujourd'hui)`;
+    if (diffDays === 1) return `Mise a jour: ${commitDate} (il y a 1 jour)`;
+    return `Mise a jour: ${commitDate} (il y a ${diffDays} jours)`;
+  };
+
+  updateEl.textContent = formatRelative();
+})();
+</script>
 <script src="./store/index.js" defer></script>
 <script src="./src/events.js" defer></script>
 <script src="./src/app.js" defer></script>
