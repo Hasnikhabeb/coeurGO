@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CoeurGo - Le jeu qui sauve des vies</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<style>
+body{
+margin:0;
+font-family:system-ui;
+background:#020617;
+color:white;
+height:100vh;
+overflow:hidden;
+--top-offset:160px;
+--bottom-offset:174px;
+}
+
+body.mobile-mode .topbar{
+padding:8px;
+}
+
+body.mobile-mode #map{
+top:var(--top-offset);
+bottom:var(--bottom-offset);
+left:50%;
+right:auto;
+width:min(390px,calc(100vw - 20px));
+transform:translateX(-50%);
+border-radius:18px 18px 0 0;
+overflow:hidden;
+box-shadow:0 0 0 1px rgba(255,255,255,0.06),0 24px 60px rgba(0,0,0,0.4);
+}
+
+#map{
+position:fixed;
+top:var(--top-offset);
+bottom:var(--bottom-offset);
+left:0;
+right:0;
+background:linear-gradient(180deg,#06101d 0%,#0a1728 100%);
+}
+
+.leaflet-tile-pane{
+filter:brightness(0.72) saturate(0.85) contrast(1.1) hue-rotate(190deg);
+}
+
+.leaflet-control-attribution{
+background:rgba(2,6,23,0.78) !important;
+color:#cbd5e1 !important;
+}
+
+.leaflet-control-attribution a{
+color:#93c5fd !important;
+}
+
+.topbar{
+display:block;
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:600;
+padding:10px 12px 8px;
+background:#020617;
+}
+
+body.mobile-mode .topbar{
+left:50%;
+right:auto;
+width:min(390px,calc(100vw - 20px));
+transform:translateX(-50%);
+border-radius:0 0 18px 18px;
+box-shadow:0 18px 40px rgba(0,0,0,0.32);
+}
+
+.topbar-controls{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+margin-bottom:8px;
+}
+
+.topline{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin-bottom:8px;
+}
+
+body.mobile-mode .topline{
+display:grid;
+grid-template-columns:1fr auto;
+align-items:start;
+gap:8px;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#ef4444;
+}
+
+.view-switch{
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:6px;
+border-radius:999px;
+background:#0b1022;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+.view-btn{
+border:none;
+background:transparent;
+color:#cbd5e1;
+padding:8px 12px;
+border-radius:999px;
+font-weight:800;
+font-size:12px;
+cursor:pointer;
+}
+
+.view-btn.is-selected{
+background:linear-gradient(180deg,#60a5fa 0%,#2563eb 100%);
+color:white;
+}
+
+.brand-block{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+body.mobile-mode .brand-block{
+gap:6px;
+}
+
+.player-card{
+display:flex;
+align-items:center;
+gap:12px;
+padding:8px 12px;
+border-radius:16px;
+background:#0b1022;
+border:1px solid rgba(255,255,255,0.08);
+box-shadow:0 10px 24px rgba(0,0,0,0.2);
+}
+
+body.mobile-mode .player-card{
+padding:6px 10px;
+gap:8px;
+}
+
+.player-avatar{
+width:44px;
+height:44px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+background:linear-gradient(180deg,#ff6b6b 0%,#dc2626 100%);
+box-shadow:0 0 18px rgba(239,68,68,0.3);
+flex-shrink:0;
+}
+
+body.mobile-mode .player-avatar{
+width:34px;
+height:34px;
+font-size:16px;
+}
+
+.player-meta{
+display:flex;
+flex-direction:column;
+gap:2px;
+min-width:0;
+}
+
+.player-label{
+font-size:11px;
+letter-spacing:1.2px;
+text-transform:uppercase;
+color:#93c5fd;
+font-weight:800;
+}
+
+.player-name{
+font-size:16px;
+font-weight:800;
+color:#f8fafc;
+}
+
+body.mobile-mode .player-name{
+font-size:14px;
+}
+
+.hud-side{
+display:flex;
+flex-direction:column;
+align-items:flex-end;
+gap:8px;
+}
+
+body.mobile-mode .hud-side{
+gap:6px;
+}
+
+.score{
+display:inline-flex;
+align-items:center;
+gap:10px;
+font-size:16px;
+font-weight:800;
+padding:8px 12px;
+border:3px solid #ff5b5b;
+border-radius:6px;
+background:#0b1022;
+}
+
+body.mobile-mode .score{
+font-size:14px;
+padding:6px 10px;
+gap:8px;
+}
+
+.clock-card{
+padding:8px 12px;
+border-radius:16px;
+background:#0b1022;
+border:1px solid rgba(255,255,255,0.08);
+text-align:right;
+min-width:225px;
+}
+
+body.mobile-mode .clock-card{
+min-width:170px;
+padding:6px 10px;
+}
+
+.clock-label{
+font-size:11px;
+letter-spacing:1.2px;
+text-transform:uppercase;
+color:#93c5fd;
+font-weight:800;
+margin-bottom:4px;
+}
+
+.clock-time{
+font-size:20px;
+font-weight:900;
+color:#f8fafc;
+line-height:1;
+}
+
+body.mobile-mode .clock-time{
+font-size:16px;
+}
+
+.clock-date{
+margin-top:2px;
+font-size:12px;
+color:#cbd5e1;
+}
+
+body.mobile-mode .clock-date{
+font-size:11px;
+}
+
+.score-icon{
+width:28px;
+height:28px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+filter:drop-shadow(0 0 8px rgba(255,110,110,0.28));
+}
+
+.score-icon svg{
+width:28px;
+height:28px;
+display:block;
+}
+
+.level-card{
+display:flex;
+align-items:center;
+gap:12px;
+padding:10px 12px;
+border-radius:24px;
+background:linear-gradient(90deg,#2378b9 0%,#3150b4 42%,#8d32cc 100%);
+box-shadow:0 12px 30px rgba(0,0,0,0.28);
+}
+
+body.mobile-mode .level-card{
+gap:8px;
+padding:8px 10px;
+border-radius:18px;
+}
+
+.level-badge,
+.level-reward{
+width:46px;
+height:46px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+flex-shrink:0;
+}
+
+body.mobile-mode .level-badge,
+body.mobile-mode .level-reward{
+width:38px;
+height:38px;
+font-size:16px;
+}
+
+.level-badge{
+background:radial-gradient(circle at 30% 30%,#55ddff,#2353ff 72%);
+box-shadow:0 0 16px rgba(71,202,255,0.75);
+}
+
+.level-reward{
+background:radial-gradient(circle at 30% 30%,#ff87f5,#8238ff 72%);
+box-shadow:0 0 16px rgba(218,102,255,0.7);
+}
+
+.level-content{
+flex:1;
+}
+
+.level-title{
+text-align:center;
+font-size:14px;
+font-weight:900;
+letter-spacing:2px;
+margin-bottom:6px;
+}
+
+body.mobile-mode .level-title{
+font-size:12px;
+letter-spacing:1.4px;
+margin-bottom:4px;
+}
+
+.level-track{
+position:relative;
+height:26px;
+padding:3px;
+border-radius:999px;
+background:rgba(11,16,34,0.45);
+box-shadow:inset 0 0 0 1px rgba(255,255,255,0.2);
+overflow:hidden;
+}
+
+body.mobile-mode .level-track{
+height:20px;
+}
+
+.level-fill{
+height:100%;
+width:0%;
+border-radius:999px;
+background:linear-gradient(90deg,#ffcb45 0%,#ff9b2f 30%,#ff5c47 65%,#b94dff 100%);
+transition:width .25s ease;
+}
+
+.level-steps{
+position:absolute;
+inset:3px;
+display:grid;
+grid-template-columns:repeat(10,1fr);
+gap:2px;
+pointer-events:none;
+}
+
+.level-steps span{
+border-right:1px solid rgba(255,255,255,0.25);
+background:rgba(255,255,255,0.04);
+}
+
+.level-meta{
+display:flex;
+justify-content:center;
+gap:16px;
+margin-top:6px;
+}
+
+body.mobile-mode .level-meta{
+gap:8px;
+margin-top:4px;
+}
+
+.level-pill{
+padding:4px 12px;
+border-radius:999px;
+background:#0b1b68;
+font-size:12px;
+font-weight:800;
+}
+
+body.mobile-mode .level-pill{
+padding:3px 8px;
+font-size:10px;
+}
+
+body.mobile-mode .panel{
+height:190px;
+padding:8px 10px 10px;
+gap:6px;
+left:50%;
+right:auto;
+width:min(390px,calc(100vw - 20px));
+transform:translateX(-50%);
+border-radius:18px 18px 0 0;
+box-shadow:0 -18px 40px rgba(0,0,0,0.32);
+}
+
+body.mobile-mode .action-btn{
+padding:10px;
+font-size:13px;
+}
+
+body.mobile-mode .actions-grid{
+grid-template-columns:1fr;
+gap:6px;
+}
+
+body.mobile-mode #missionBox,
+body.mobile-mode .status-box{
+padding:9px 11px;
+font-size:12px;
+line-height:1.25;
+}
+
+.panel{
+height:174px;
+padding:10px 12px 12px;
+background:#020617;
+display:flex;
+flex-direction:column;
+gap:8px;
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+z-index:600;
+}
+
+.actions-grid{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:8px;
+}
+
+.action-btn{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#ef4444;
+color:white;
+font-weight:bold;
+transition:transform .15s ease,opacity .15s ease,filter .15s ease,background .15s ease;
+}
+
+.action-btn:not(:disabled):hover{
+transform:translateY(-1px);
+filter:brightness(1.04);
+}
+
+.action-btn.is-active{
+background:linear-gradient(180deg,#ff6b6b 0%,#dc2626 100%);
+box-shadow:0 10px 24px rgba(239,68,68,0.26);
+}
+
+.action-btn.is-done{
+background:linear-gradient(180deg,#34d399 0%,#059669 100%);
+box-shadow:0 10px 24px rgba(16,185,129,0.22);
+}
+
+.action-btn:disabled{
+background:#334155;
+color:#cbd5e1;
+opacity:.7;
+box-shadow:none;
+cursor:not-allowed;
+}
+
+#missionBox{
+padding:12px 14px;
+border-radius:16px;
+background:#0b1022;
+border:1px solid rgba(255,255,255,0.08);
+line-height:1.35;
+font-size:14px;
+}
+
+.status-box{
+padding:12px 14px;
+border-radius:16px;
+border:1px solid rgba(255,255,255,0.08);
+background:#101827;
+color:#dbeafe;
+min-height:20px;
+line-height:1.35;
+opacity:0;
+transform:translateY(4px);
+transition:opacity .2s ease,transform .2s ease,border-color .2s ease,background .2s ease;
+pointer-events:none;
+font-size:14px;
+}
+
+.status-box.is-visible{
+opacity:1;
+transform:translateY(0);
+}
+
+.status-box.is-info{
+background:#0f172a;
+border-color:rgba(96,165,250,0.22);
+}
+
+.status-box.is-success{
+background:#062e25;
+border-color:rgba(52,211,153,0.28);
+}
+
+.status-box.is-error{
+background:#3b0b16;
+border-color:rgba(251,113,133,0.32);
+}
+
+.checklist-overlay{
+position:fixed;
+inset:0;
+background:rgba(2,6,23,0.78);
+display:none;
+align-items:center;
+justify-content:center;
+padding:18px;
+z-index:900;
+}
+
+.checklist-overlay.is-open{
+display:flex;
+}
+
+.checklist-card{
+width:min(1180px,100%);
+max-height:min(88vh,900px);
+overflow:auto;
+border-radius:24px;
+background:#f1f5f9;
+color:#0f172a;
+box-shadow:0 28px 80px rgba(0,0,0,0.45);
+}
+
+.checklist-header{
+padding:22px 24px;
+background:#dc2626;
+color:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+}
+
+.checklist-title{
+font-size:clamp(28px,4vw,52px);
+font-weight:300;
+text-align:center;
+flex:1;
+}
+
+.checklist-close{
+border:none;
+background:rgba(255,255,255,0.16);
+color:white;
+width:42px;
+height:42px;
+border-radius:50%;
+font-size:24px;
+cursor:pointer;
+flex-shrink:0;
+}
+
+.checklist-grid{
+display:grid;
+grid-template-columns:repeat(5,minmax(0,1fr));
+}
+
+.checklist-item{
+padding:22px 18px 26px;
+border-right:1px solid rgba(249,115,22,0.35);
+display:flex;
+flex-direction:column;
+gap:18px;
+justify-content:space-between;
+}
+
+.checklist-item:last-child{
+border-right:none;
+}
+
+.checklist-step{
+font-size:18px;
+color:#f97316;
+text-align:center;
+}
+
+.checklist-text{
+font-size:18px;
+line-height:1.45;
+text-align:center;
+}
+
+.checklist-check{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+font-weight:800;
+}
+
+.checklist-check input{
+width:22px;
+height:22px;
+}
+
+.checklist-footer{
+display:flex;
+justify-content:flex-end;
+padding:18px 20px 22px;
+background:#e2e8f0;
+}
+
+.validate-checklist-btn{
+border:none;
+padding:14px 18px;
+border-radius:14px;
+font-weight:900;
+background:#94a3b8;
+color:white;
+cursor:not-allowed;
+}
+
+.validate-checklist-btn.is-ready{
+background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);
+cursor:pointer;
+}
+
+@media (max-width:900px){
+#map{
+top:170px;
+bottom:174px;
+}
+
+.level-card{
+padding:10px;
+}
+
+.level-badge,
+.level-reward{
+width:44px;
+height:44px;
+font-size:20px;
+}
+}
+
+@media (max-width:680px){
+.topline{
+flex-direction:column;
+align-items:stretch;
+gap:8px;
+}
+
+.hud-side{
+align-items:stretch;
+width:100%;
+}
+
+.clock-card{
+min-width:0;
+text-align:left;
+}
+
+.level-card{
+padding:10px;
+gap:10px;
+}
+
+.level-title{
+font-size:13px;
+letter-spacing:1.5px;
+}
+
+.level-track{
+height:28px;
+}
+
+.level-meta{
+flex-wrap:wrap;
+gap:10px;
+}
+
+.panel{
+padding:12px;
+height:174px;
+}
+
+#map{
+top:230px;
+bottom:174px;
+}
+}
+
+@media (max-width:520px){
+#map{
+top:225px;
+bottom:196px;
+min-height:140px;
+}
+
+.topbar{
+padding:8px;
+}
+
+.logo{
+font-size:18px;
+}
+
+.score{
+font-size:14px;
+padding:7px 10px;
+}
+
+.player-card{
+padding:8px 10px;
+}
+
+.player-name{
+font-size:15px;
+}
+
+.clock-time{
+font-size:16px;
+}
+
+.level-card{
+display:grid;
+grid-template-columns:42px 1fr 42px;
+align-items:center;
+padding:8px;
+}
+
+.level-badge,
+.level-reward{
+width:42px;
+height:42px;
+font-size:18px;
+}
+
+.level-pill{
+font-size:11px;
+padding:4px 8px;
+}
+
+.panel{
+height:196px;
+padding:10px;
+}
+}
+
+@media (max-width:980px){
+.checklist-grid{
+grid-template-columns:1fr;
+}
+
+.checklist-item{
+border-right:none;
+border-bottom:1px solid rgba(249,115,22,0.25);
+}
+
+.checklist-item:last-child{
+border-bottom:none;
+}
+}
+
+@media (max-width:520px){
+.checklist-overlay{
+padding:10px;
+align-items:flex-end;
+}
+
+.checklist-card{
+width:min(390px,100%);
+max-height:82vh;
+border-radius:22px 22px 0 0;
+}
+
+.checklist-header{
+padding:14px 16px;
+}
+
+.checklist-title{
+font-size:22px;
+line-height:1.1;
+}
+
+.checklist-close{
+width:36px;
+height:36px;
+font-size:20px;
+}
+
+.checklist-item{
+padding:14px 12px 16px;
+gap:12px;
+}
+
+.checklist-step{
+font-size:16px;
+}
+
+.checklist-text{
+font-size:15px;
+line-height:1.35;
+}
+
+.checklist-check{
+font-size:13px;
+}
+
+.checklist-footer{
+padding:12px 14px 16px;
+}
+
+.validate-checklist-btn{
+width:100%;
+padding:12px 14px;
+font-size:14px;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<div class="topbar-controls">
+<div class="logo">❤️ CoeurGo</div>
+<div class="view-switch">
+<button class="view-btn is-selected" id="desktopViewBtn" type="button">Desktop</button>
+<button class="view-btn" id="mobileViewBtn" type="button">Mobile</button>
+</div>
+</div>
+
+<div class="topline">
+<div class="brand-block">
+<div class="player-card">
+<div class="player-avatar">🫀</div>
+<div class="player-meta">
+<div class="player-label">Joueur secouriste</div>
+<div class="player-name">Alexandre Houssin</div>
+</div>
+</div>
+</div>
+
+<div class="hud-side">
+<div class="clock-card">
+<div class="clock-label">Horloge de mission</div>
+<div class="clock-time" id="clockTime">00:00:00</div>
+<div class="clock-date" id="clockDate">Chargement...</div>
+</div>
+
+<div class="score">
+<span class="score-icon" aria-hidden="true">
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="cgHeart" x1="14" y1="12" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+<stop stop-color="#ff8c73"/>
+<stop offset=".4" stop-color="#ff2f48"/>
+<stop offset="1" stop-color="#c3002e"/>
+</linearGradient>
+<linearGradient id="cgBolt" x1="28" y1="17" x2="42" y2="49" gradientUnits="userSpaceOnUse">
+<stop stop-color="#fff27d"/>
+<stop offset=".52" stop-color="#ffd400"/>
+<stop offset="1" stop-color="#ffae00"/>
+</linearGradient>
+<linearGradient id="cgPin" x1="31" y1="38" x2="48" y2="58" gradientUnits="userSpaceOnUse">
+<stop stop-color="#ecfbff"/>
+<stop offset=".55" stop-color="#a2e3ee"/>
+<stop offset="1" stop-color="#67c2df"/>
+</linearGradient>
+</defs>
+<path d="M32 57C28.1 54.2 12 41.2 12 27.3 12 19.7 17.3 14 24.8 14c3.8 0 6.3 1.3 7.2 3.7.9-2.4 3.4-3.7 7.2-3.7C46.7 14 52 19.7 52 27.3 52 41.2 35.9 54.2 32 57Z" fill="#3a1348"/>
+<path d="M32 53.5C28.8 51.1 16.2 39.8 16.2 28.6c0-5.7 3.8-9.3 9-9.3 3.3 0 5.5 1.1 6.8 3.5 1.3-2.4 3.5-3.5 6.8-3.5 5.2 0 9 3.6 9 9.3 0 11.2-12.6 22.5-15.8 24.9Z" fill="url(#cgHeart)"/>
+<ellipse cx="24.5" cy="24" rx="7.7" ry="4.8" transform="rotate(-28 24.5 24)" fill="#fff" opacity=".7"/>
+<ellipse cx="19" cy="29" rx="2.1" ry="3.1" transform="rotate(28 19 29)" fill="#fff" opacity=".85"/>
+<path d="M34.1 18.9 24.8 34.3h7.7L30 45.8 42.8 30.8h-8.2l-.5-11.9Z" fill="#fff" opacity=".95"/>
+<path d="M36.4 17.4 27.3 32.5h7.1L32 42.7 45 29.5h-7.8l-.8-12.1Z" fill="url(#cgBolt)"/>
+<path d="M38.1 37.2c6.3 0 10.9 4.4 10.9 10 0 7.2-7.8 12.4-10.9 14.5-3.1-2.1-10.9-7.3-10.9-14.5 0-5.6 4.6-10 10.9-10Z" fill="#143d79"/>
+<path d="M38.1 40.3c4.5 0 7.8 3 7.8 6.8 0 4.4-4.7 8.1-7.8 10.3-3.1-2.2-7.8-5.9-7.8-10.3 0-3.8 3.3-6.8 7.8-6.8Z" fill="url(#cgPin)"/>
+<circle cx="38.1" cy="47.2" r="3" fill="#2f92e8"/>
+</svg>
+</span>
+<span id="score">0</span>
+</div>
+</div>
+</div>
+
+<div class="level-card">
+<div class="level-badge">🛡️</div>
+
+<div class="level-content">
+<div class="level-title">LEVELS</div>
+
+<div class="level-track">
+<div class="level-fill" id="levelFill"></div>
+<div class="level-steps">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+
+<div class="level-meta">
+<div class="level-pill">Niveau <span id="levelValue">1</span></div>
+<div class="level-pill"><span id="levelPercent">0</span>%</div>
+</div>
+</div>
+
+<div class="level-reward">🎁</div>
+</div>
+</div>
+
+<div id="map"></div>
+
+<div class="panel">
+<div id="missionBox">
+Centre de commandement: selectionne un DAE pour lancer une mission de sauvetage
+</div>
+
+<div class="status-box is-info" id="statusBox"></div>
+
+<div class="actions-grid">
+<button class="action-btn is-active" id="findBtn" onclick="findAED()">📍 Trouver le DAE (+10)</button>
+<button class="action-btn" id="checkBtn" onclick="checkAED()" disabled>🔎 Vérifier le DAE (+20)</button>
+<button class="action-btn" id="photoBtn" onclick="photoAED()" disabled>📷 Photo validation (+20)</button>
+</div>
+</div>
+
+<div class="checklist-overlay" id="checklistOverlay">
+<div class="checklist-card">
+<div class="checklist-header">
+<div class="checklist-title">Verification du defibrillateur</div>
+<button class="checklist-close" type="button" id="closeChecklistBtn">×</button>
+</div>
+
+<div class="checklist-grid">
+<div class="checklist-item">
+<div class="checklist-step">Socle 1 :</div>
+<div class="checklist-text">Verification visuelle exterieure: absence de fissure ou de trou.</div>
+<label class="checklist-check"><input type="checkbox" class="check-item"> Valide</label>
+</div>
+<div class="checklist-item">
+<div class="checklist-step">Socle 2 :</div>
+<div class="checklist-text">Verifier la plaque, le nom du responsable, la marque et la date de validite du defibrillateur.</div>
+<label class="checklist-check"><input type="checkbox" class="check-item"> Valide</label>
+</div>
+<div class="checklist-item">
+<div class="checklist-step">Socle 3 :</div>
+<div class="checklist-text">Surveiller l'etat de la batterie et des electrodes avec la date du prochain remplacement.</div>
+<label class="checklist-check"><input type="checkbox" class="check-item"> Valide</label>
+</div>
+<div class="checklist-item">
+<div class="checklist-step">Socle 4 :</div>
+<div class="checklist-text">Verifier la lumiere du defibrillateur et la presence d'un signal sonore.</div>
+<label class="checklist-check"><input type="checkbox" class="check-item"> Valide</label>
+</div>
+<div class="checklist-item">
+<div class="checklist-step">Socle 5 :</div>
+<div class="checklist-text">Si aucun bruit n'est present, actionner le bouton bleu pour entendre l'instruction vocale.</div>
+<label class="checklist-check"><input type="checkbox" class="check-item"> Valide</label>
+</div>
+</div>
+
+<div class="checklist-footer">
+<button class="validate-checklist-btn" id="validateChecklistBtn" type="button" disabled>Valider au moins un point</button>
+</div>
+</div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+let score=0
+let missionStep=0
+let currentAED=null
+let playerPos=null
+const POINTS_PER_LEVEL=50
+const TOTAL_LEVELS=10
+
+const vernon={lat:49.0929,lng:1.4883}
+const levelFill=document.getElementById("levelFill")
+const levelValue=document.getElementById("levelValue")
+const levelPercent=document.getElementById("levelPercent")
+const missionBox=document.getElementById("missionBox")
+const statusBox=document.getElementById("statusBox")
+const clockTime=document.getElementById("clockTime")
+const clockDate=document.getElementById("clockDate")
+const findBtn=document.getElementById("findBtn")
+const checkBtn=document.getElementById("checkBtn")
+const photoBtn=document.getElementById("photoBtn")
+const desktopViewBtn=document.getElementById("desktopViewBtn")
+const mobileViewBtn=document.getElementById("mobileViewBtn")
+const topbar=document.querySelector(".topbar")
+const panel=document.querySelector(".panel")
+const checklistOverlay=document.getElementById("checklistOverlay")
+const closeChecklistBtn=document.getElementById("closeChecklistBtn")
+const validateChecklistBtn=document.getElementById("validateChecklistBtn")
+const checklistItems=[...document.querySelectorAll(".check-item")]
+let statusTimer=null
+
+const map=L.map("map").setView([vernon.lat,vernon.lng],14)
+
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+maxZoom:19
+}).addTo(map)
+
+const iconGreen=L.divIcon({
+html:"<div style='font-size:30px'>🟢</div>"
+})
+
+const iconYellow=L.divIcon({
+html:"<div style='font-size:30px'>🟡</div>"
+})
+
+const iconRed=L.divIcon({
+html:"<div style='font-size:30px'>🔴</div>"
+})
+
+const aeds=[
+{
+name:"Mairie de Vernon",
+lat:49.0915,
+lng:1.4889,
+status:"verified",
+marker:null
+},
+{
+name:"Gare de Vernon",
+lat:49.0919,
+lng:1.4780,
+status:"to_verify",
+marker:null
+},
+{
+name:"Gymnase Ariane",
+lat:49.0957,
+lng:1.4963,
+status:"to_verify",
+marker:null
+},
+{
+name:"Centre commercial Vernonnet",
+lat:49.1012,
+lng:1.4951,
+status:"problem",
+marker:null
+}
+]
+
+aeds.forEach(a=>{
+let icon=iconYellow
+
+if(a.status==="verified") icon=iconGreen
+if(a.status==="problem") icon=iconRed
+
+a.marker=L.marker([a.lat,a.lng],{icon:icon}).addTo(map)
+
+a.marker.on("click",()=>{
+currentAED=a
+missionStep=0
+missionBox.innerHTML="❤️ Mission de sauvetage<br>"+a.name
+showStatus("DAE repere. Commence par confirmer sa presence sur le terrain.", "info")
+updateActionButtons()
+})
+})
+
+if(navigator.geolocation){
+navigator.geolocation.watchPosition(pos=>{
+const lat=pos.coords.latitude
+const lng=pos.coords.longitude
+
+playerPos={lat,lng}
+
+map.setView([lat,lng],15)
+
+L.circleMarker([lat,lng],{
+radius:8,
+color:"#ef4444"
+}).addTo(map)
+
+updateRadar()
+})
+}
+
+function showStatus(message,type="info"){
+statusBox.textContent=message
+statusBox.className="status-box is-visible is-"+type
+
+if(statusTimer){
+clearTimeout(statusTimer)
+}
+
+if(type!=="error"){
+statusTimer=setTimeout(()=>{
+statusBox.className="status-box is-"+type
+},2200)
+}
+}
+
+function updateClock(){
+const now=new Date()
+clockTime.textContent=now.toLocaleTimeString("fr-FR",{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit"
+})
+
+clockDate.textContent=now.toLocaleDateString("fr-FR",{
+weekday:"long",
+day:"2-digit",
+month:"long",
+year:"numeric"
+})
+}
+
+function updateLayoutMetrics(){
+document.body.style.setProperty("--top-offset",topbar.offsetHeight+"px")
+document.body.style.setProperty("--bottom-offset",panel.offsetHeight+"px")
+setTimeout(()=>{
+map.invalidateSize()
+},80)
+}
+
+function setHeaderMode(mode){
+const isMobileMode=mode==="mobile"
+document.body.classList.toggle("mobile-mode",isMobileMode)
+desktopViewBtn.classList.toggle("is-selected",!isMobileMode)
+mobileViewBtn.classList.toggle("is-selected",isMobileMode)
+localStorage.setItem("coeurgo-header-mode",mode)
+updateLayoutMetrics()
+}
+
+function updateActionButtons(){
+const hasAED=Boolean(currentAED)
+const stepDone=missionStep
+
+findBtn.disabled=!hasAED||stepDone>0
+checkBtn.disabled=!hasAED||stepDone!==1
+photoBtn.disabled=!hasAED||stepDone!==2
+
+findBtn.className="action-btn"+(stepDone===0&&hasAED?" is-active":"")+(stepDone>0?" is-done":"")
+checkBtn.className="action-btn"+(stepDone===1?" is-active":"")+(stepDone>1?" is-done":"")
+photoBtn.className="action-btn"+(stepDone===2?" is-active":"")+(stepDone>2?" is-done":"")
+}
+
+function resetChecklist(){
+checklistItems.forEach(item=>{
+item.checked=false
+})
+validateChecklistBtn.disabled=true
+validateChecklistBtn.classList.remove("is-ready")
+}
+
+function updateChecklistState(){
+const hasAnyChecked=checklistItems.some(item=>item.checked)
+validateChecklistBtn.disabled=!hasAnyChecked
+validateChecklistBtn.classList.toggle("is-ready",hasAnyChecked)
+}
+
+function openChecklist(){
+resetChecklist()
+checklistOverlay.classList.add("is-open")
+}
+
+function closeChecklist(){
+checklistOverlay.classList.remove("is-open")
+}
+
+function distance(lat1,lon1,lat2,lon2){
+const R=6371
+const dLat=(lat2-lat1)*Math.PI/180
+const dLon=(lon2-lon1)*Math.PI/180
+
+const a=
+Math.sin(dLat/2)*Math.sin(dLat/2)+
+Math.cos(lat1*Math.PI/180)*
+Math.cos(lat2*Math.PI/180)*
+Math.sin(dLon/2)*Math.sin(dLon/2)
+
+const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+
+return R*c*1000
+}
+
+function updateRadar(){
+if(!playerPos) return
+
+let min=999999
+
+aeds.forEach(a=>{
+const d=distance(playerPos.lat,playerPos.lng,a.lat,a.lng)
+if(d<min) min=d
+})
+}
+
+function findAED(){
+if(!currentAED){
+showStatus("Choisis d'abord un DAE sur la carte pour lancer l'intervention.", "error")
+return
+}
+
+if(missionStep>0){
+showStatus("Le reperage a deja ete valide pour cette mission.", "error")
+return
+}
+
+score+=10
+missionStep=1
+updateScore()
+missionBox.innerHTML="📍 DAE localise<br>+10 points de secours"
+showStatus("Balise securisee. La verification terrain est maintenant debloquee.", "success")
+updateActionButtons()
+}
+
+function checkAED(){
+if(missionStep<1){
+showStatus("La verification terrain se debloque apres le reperage du DAE.", "error")
+return
+}
+
+if(missionStep>1){
+showStatus("La verification terrain a deja ete effectuee.", "error")
+return
+}
+openChecklist()
+}
+
+function photoAED(){
+if(missionStep<2){
+showStatus("La preuve photo se debloque apres le controle du DAE.", "error")
+return
+}
+
+score+=20
+missionStep=3
+updateScore()
+missionBox.innerHTML="📷 Preuve photo validee<br>+20 points de secours<br>Mission terminee"
+showStatus("Mission reussie. Une vie de plus peut etre protegee. Choisis un nouveau DAE.", "success")
+updateActionButtons()
+
+validateAED()
+}
+
+function validateAED(){
+currentAED.status="verified"
+currentAED.marker.setIcon(iconGreen)
+missionStep=0
+currentAED=null
+updateActionButtons()
+}
+
+function updateScore(){
+document.getElementById("score").innerText=score
+updateLevel()
+}
+
+function updateLevel(){
+const level=Math.floor(score/POINTS_PER_LEVEL)+1
+const maxScore=POINTS_PER_LEVEL*TOTAL_LEVELS
+const clampedScore=Math.min(score,maxScore)
+const progress=clampedScore/maxScore*100
+
+levelValue.innerText=Math.min(level,TOTAL_LEVELS)
+levelPercent.innerText=Math.round(progress)
+levelFill.style.width=progress+"%"
+}
+
+updateLevel()
+updateActionButtons()
+updateClock()
+setInterval(updateClock,1000)
+setHeaderMode(localStorage.getItem("coeurgo-header-mode")||"desktop")
+desktopViewBtn.addEventListener("click",()=>setHeaderMode("desktop"))
+mobileViewBtn.addEventListener("click",()=>setHeaderMode("mobile"))
+checklistItems.forEach(item=>item.addEventListener("change",updateChecklistState))
+closeChecklistBtn.addEventListener("click",closeChecklist)
+validateChecklistBtn.addEventListener("click",()=>{
+score+=20
+missionStep=2
+updateScore()
+missionBox.innerHTML="🔎 DAE controle<br>+20 points de secours"
+showStatus("Controle complet valide. La preuve photo est maintenant debloquee.", "success")
+updateActionButtons()
+closeChecklist()
+})
+checklistOverlay.addEventListener("click",event=>{
+if(event.target===checklistOverlay){
+closeChecklist()
+}
+})
+window.addEventListener("resize",updateLayoutMetrics)
+window.addEventListener("load",updateLayoutMetrics)
+showStatus("Alexandre Houssin est en service. Selectionne un DAE pour lancer une mission de sauvetage.", "info")
+</script>
+</body>
+</html>

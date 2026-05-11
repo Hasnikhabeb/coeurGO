@@ -1,0 +1,9 @@
+# Persistent Context
+
+Add stable context here before starting the agent. The content is injected into
+the Realtime session instructions at startup.
+
+Examples:
+- My current priority is ...
+- My working hours are ...
+- Challenge me when I avoid ...
