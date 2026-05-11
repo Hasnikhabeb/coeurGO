@@ -43,19 +43,10 @@
         return;
       }
 
-      const nextItem = context.checklistItems
+      context.checklistItems
         .slice(index + 1)
-        .find(candidate => !candidate.checked);
-
-      if (!nextItem) {
-        return;
-      }
-
-      nextItem.closest(".checklist-item")?.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
-      });
-      nextItem.focus({ preventScroll: true });
+        .find(candidate => !candidate.checked)
+        ?.focus({ preventScroll: true });
     };
   }
 

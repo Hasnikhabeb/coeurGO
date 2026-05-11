@@ -2092,7 +2092,7 @@ function resetChecklist() {
   });
   validateChecklistBtn.disabled = true;
   validateChecklistBtn.classList.remove("is-ready");
-  checklistFooterStatus.textContent = "Coche au moins un point pour activer la validation.";
+  checklistFooterStatus.textContent = `0/${checklistItems.length} confirmes`;
 }
 
 function updateChecklistState() {
@@ -2100,9 +2100,7 @@ function updateChecklistState() {
   const hasAnyChecked = checkedCount > 0;
   validateChecklistBtn.disabled = !hasAnyChecked;
   validateChecklistBtn.classList.toggle("is-ready", hasAnyChecked);
-  checklistFooterStatus.textContent = hasAnyChecked
-    ? `${checkedCount}/${checklistItems.length} points confirmes`
-    : "Coche au moins un point pour activer la validation.";
+  checklistFooterStatus.textContent = `${checkedCount}/${checklistItems.length} confirmes`;
   refreshAssistantPrimary("proactive");
 }
 

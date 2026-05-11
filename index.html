@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>❤️❤️❤️CoeurGO</title>
-<link rel="stylesheet" href="./styles/app.css?v=20260511-2208">
+<link rel="stylesheet" href="./styles/app.css?v=20260511-2211">
 </head>
 <body>
 <div class="topbar">
@@ -115,20 +115,20 @@
 <div class="checklist-overlay" id="checklistOverlay" hidden>
   <div class="checklist-card">
     <div class="checklist-header">
-      <div class="checklist-title">Verification terrain du defibrillateur</div>
+      <div class="checklist-title">Controle terrain</div>
       <button class="checklist-close" type="button" id="closeChecklistBtn">x</button>
     </div>
-    <div class="checklist-intro"><strong>Objectif :</strong> coche uniquement ce que tu as vraiment confirme sur place. Les points s'enchainent automatiquement pour rendre la validation plus fluide.</div>
+    <div class="checklist-intro">Coche les points confirmes sur place.</div>
     <div class="checklist-grid">
-      <div class="checklist-item"><div class="checklist-step">Etape 1</div><div class="checklist-summary">Verifier l'etat general du boitier.</div><div class="checklist-text">Le DAE doit etre propre, stable et correctement protege.</div><div class="checklist-help"><strong>A observer :</strong> fermeture, support, choc ou casse visible.</div><div class="checklist-errors"><strong>Erreurs frequentes :</strong> boitier fissure, vitre manquante, support tordu.</div><label class="checklist-check"><input type="checkbox" class="check-item"> Point controle</label></div>
-      <div class="checklist-item"><div class="checklist-step">Etape 2</div><div class="checklist-summary">Verifier l'identification du DAE.</div><div class="checklist-text">Un debutant doit reconnaitre immediatement qu'il s'agit d'un defibrillateur.</div><div class="checklist-help"><strong>A observer :</strong> nom du DAE, pictogramme, marque et consignes de base.</div><div class="checklist-errors"><strong>Erreurs frequentes :</strong> etiquette illisible, appareil mal signale.</div><label class="checklist-check"><input type="checkbox" class="check-item"> Point controle</label></div>
-      <div class="checklist-item"><div class="checklist-step">Etape 3</div><div class="checklist-summary">Verifier batterie et electrodes.</div><div class="checklist-text">Sans consommables valides, le DAE risque d'etre inutilisable.</div><div class="checklist-help"><strong>A observer :</strong> dates, emballage et indicateurs d'etat.</div><div class="checklist-errors"><strong>Erreurs frequentes :</strong> date depassee, emballage deja ouvert.</div><label class="checklist-check"><input type="checkbox" class="check-item"> Point controle</label></div>
-      <div class="checklist-item"><div class="checklist-step">Etape 4</div><div class="checklist-summary">Verifier le temoin de fonctionnement.</div><div class="checklist-text">Le voyant doit rassurer sur la disponibilite de l'appareil.</div><div class="checklist-help"><strong>A observer :</strong> temoin normal, absence d'alerte, appareil intact.</div><div class="checklist-errors"><strong>Erreurs frequentes :</strong> voyant rouge, message d'erreur, signal sonore anormal.</div><label class="checklist-check"><input type="checkbox" class="check-item"> Point controle</label></div>
-      <div class="checklist-item"><div class="checklist-step">Etape 5</div><div class="checklist-summary">Verifier que l'appareil peut guider l'utilisateur.</div><div class="checklist-text">Le DAE doit rester facile d'acces et comprehensible en situation reelle.</div><div class="checklist-help"><strong>A observer :</strong> acces libre, bouton d'aide, consignes visibles.</div><div class="checklist-errors"><strong>Erreurs frequentes :</strong> acces bloque, consigne absente, sortie difficile.</div><label class="checklist-check"><input type="checkbox" class="check-item"> Point controle</label></div>
+      <div class="checklist-item"><label class="checklist-check"><input type="checkbox" class="check-item"><span class="checklist-step">Etape 1</span><span class="checklist-summary">Etat general du boitier</span></label><details class="checklist-info"><summary>i</summary><div class="checklist-info-body"><p>Le DAE doit etre propre, stable et correctement protege.</p><p><strong>A observer :</strong> fermeture, support, choc ou casse visible.</p><p><strong>Erreurs :</strong> boitier fissure, vitre manquante, support tordu.</p></div></details></div>
+      <div class="checklist-item"><label class="checklist-check"><input type="checkbox" class="check-item"><span class="checklist-step">Etape 2</span><span class="checklist-summary">Identification du DAE</span></label><details class="checklist-info"><summary>i</summary><div class="checklist-info-body"><p>Un debutant doit reconnaitre immediatement le defibrillateur.</p><p><strong>A observer :</strong> nom du DAE, pictogramme, marque et consignes de base.</p><p><strong>Erreurs :</strong> etiquette illisible, appareil mal signale.</p></div></details></div>
+      <div class="checklist-item"><label class="checklist-check"><input type="checkbox" class="check-item"><span class="checklist-step">Etape 3</span><span class="checklist-summary">Batterie et electrodes</span></label><details class="checklist-info"><summary>i</summary><div class="checklist-info-body"><p>Sans consommables valides, le DAE risque d'etre inutilisable.</p><p><strong>A observer :</strong> dates, emballage et indicateurs d'etat.</p><p><strong>Erreurs :</strong> date depassee, emballage deja ouvert.</p></div></details></div>
+      <div class="checklist-item"><label class="checklist-check"><input type="checkbox" class="check-item"><span class="checklist-step">Etape 4</span><span class="checklist-summary">Temoin de fonctionnement</span></label><details class="checklist-info"><summary>i</summary><div class="checklist-info-body"><p>Le voyant doit confirmer la disponibilite de l'appareil.</p><p><strong>A observer :</strong> temoin normal, absence d'alerte, appareil intact.</p><p><strong>Erreurs :</strong> voyant rouge, message d'erreur, signal sonore anormal.</p></div></details></div>
+      <div class="checklist-item"><label class="checklist-check"><input type="checkbox" class="check-item"><span class="checklist-step">Etape 5</span><span class="checklist-summary">Guidage utilisateur</span></label><details class="checklist-info"><summary>i</summary><div class="checklist-info-body"><p>Le DAE doit rester facile d'acces et comprehensible.</p><p><strong>A observer :</strong> acces libre, bouton d'aide, consignes visibles.</p><p><strong>Erreurs :</strong> acces bloque, consigne absente, sortie difficile.</p></div></details></div>
     </div>
     <div class="checklist-footer">
-      <div class="checklist-footer-status" id="checklistFooterStatus">Coche au moins un point pour activer la validation.</div>
-      <button class="validate-checklist-btn" id="validateChecklistBtn" type="button" disabled>Valider le controle terrain</button>
+      <div class="checklist-footer-status" id="checklistFooterStatus">0/5 confirmes</div>
+      <button class="validate-checklist-btn" id="validateChecklistBtn" type="button" disabled>Valider</button>
     </div>
   </div>
 </div>
@@ -149,11 +149,11 @@
 
 <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
 
-<script src="./store/index.js?v=20260511-2208" defer></script>
-<script src="./src/release.js?v=20260511-2208" defer></script>
-<script src="./src/events.js?v=20260511-2208" defer></script>
-<script src="./src/vendor/leaflet.js?v=20260511-2208" defer></script>
-<script src="./src/data/aeds-vernon.js?v=20260511-2208" defer></script>
-<script src="./src/app.js?v=20260511-2208" defer></script>
+<script src="./store/index.js?v=20260511-2211" defer></script>
+<script src="./src/release.js?v=20260511-2211" defer></script>
+<script src="./src/events.js?v=20260511-2211" defer></script>
+<script src="./src/vendor/leaflet.js?v=20260511-2211" defer></script>
+<script src="./src/data/aeds-vernon.js?v=20260511-2211" defer></script>
+<script src="./src/app.js?v=20260511-2211" defer></script>
 </body>
 </html>
