@@ -753,7 +753,7 @@ body.mobile-mode .topline{display:grid;grid-template-columns:minmax(0,1fr) auto;
 @keyframes logoPulse{0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 0 rgba(34,211,238,0))}50%{transform:translateY(-1px) scale(1.03);filter:drop-shadow(0 0 8px rgba(34,211,238,.35))}}
 @keyframes logoUnderline{0%,100%{opacity:.35;transform:scaleX(.78)}50%{opacity:.95;transform:scaleX(1)}}
 .action-btn,.checklist-close,.checklist-check,.validate-checklist-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.player-card,.clock-card,.score,.level-card,#missionBox,.status-box{border:1px solid rgba(255,255,255,.08);background:#0b1022}
+.player-card,.clock-card,.score,.level-card,.status-box{border:1px solid rgba(255,255,255,.08);background:#0b1022}
 .player-card{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:18px;box-shadow:0 12px 24px rgba(0,0,0,.18)}
 .player-avatar{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:16px;font-weight:900;letter-spacing:.08em;background:linear-gradient(180deg,#ff6b6b 0%,#dc2626 100%)}
 .player-meta{min-width:0;display:flex;flex-direction:column;gap:3px}
@@ -820,7 +820,8 @@ body.mobile-mode .level-badge,body.mobile-mode .level-reward{margin:0}
 .level-pill{padding:5px 12px;border-radius:999px;background:rgba(11,27,104,.72);font-size:12px;font-weight:800}
 .panel{position:fixed;left:0;right:0;bottom:0;z-index:700;min-height:0;max-height:min(24vh,214px);overflow:hidden;padding:10px 14px 12px;background:var(--panel);border-top:1px solid var(--panel-line);backdrop-filter:blur(16px);display:flex;flex-direction:column;gap:8px}
 body.mobile-mode .panel{left:50%;right:auto;width:min(410px,calc(100vw - 16px));transform:translateX(-50%);min-height:0;max-height:min(44dvh,430px);overflow:auto;border-radius:22px 22px 0 0;box-shadow:0 -18px 40px rgba(0,0,0,.3);padding-bottom:calc(14px + env(safe-area-inset-bottom))}
-#missionBox,.status-box{padding:12px 14px;border-radius:18px}
+#missionBox{display:none!important}
+.status-box{padding:12px 14px;border-radius:18px}
 .mission-card{display:flex;flex-direction:column;gap:10px}
 .mission-kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#93c5fd;font-weight:900}
 .mission-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
