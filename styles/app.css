@@ -748,7 +748,7 @@ body.mobile-mode .topline{display:grid;grid-template-columns:minmax(0,1fr) auto;
 .logo-dynamic-text{position:relative;display:inline-block;background:linear-gradient(120deg,#f472b6 0%,#fb7185 28%,#f59e0b 55%,#22d3ee 78%,#a78bfa 100%);background-size:220% 220%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:logoGradientShift 6s ease-in-out infinite,logoPulse 2.8s ease-in-out infinite;text-shadow:0 0 18px rgba(244,114,182,.25)}
 .logo-dynamic-text::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;border-radius:999px;background:linear-gradient(90deg,rgba(244,114,182,.12),rgba(34,211,238,.6),rgba(167,139,250,.12));animation:logoUnderline 2.2s ease-in-out infinite}
 .logo-version{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(15,23,42,.72);color:#cbd5e1;font-size:11px;font-weight:800;letter-spacing:.06em;line-height:1}
-.logo small{display:block;margin-top:4px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.logo small{display:block;margin-top:3px;font-size:9px;letter-spacing:.08em;text-transform:none;color:rgba(148,163,184,.58);line-height:1.15}
 @keyframes logoGradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 @keyframes logoPulse{0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 0 rgba(34,211,238,0))}50%{transform:translateY(-1px) scale(1.03);filter:drop-shadow(0 0 8px rgba(34,211,238,.35))}}
 @keyframes logoUnderline{0%,100%{opacity:.35;transform:scaleX(.78)}50%{opacity:.95;transform:scaleX(1)}}
@@ -827,11 +827,6 @@ body.mobile-mode .panel{left:50%;right:auto;width:min(410px,calc(100vw - 16px));
 .mission-name{font-size:22px;font-weight:900;line-height:1.08}
 .mission-details{font-size:13px;line-height:1.45;color:var(--soft)}
 .mission-distance{padding:8px 12px;border-radius:999px;background:rgba(14,116,144,.2);border:1px solid rgba(56,189,248,.22);color:#e0f2fe;font-size:13px;font-weight:900;white-space:nowrap}
-.mission-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.mission-metric{padding:10px 12px;border-radius:14px;background:rgba(15,23,42,.58);border:1px solid rgba(148,163,184,.14);color:var(--soft);font-size:13px;line-height:1.35}
-.mission-metric strong{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#93c5fd;margin-bottom:4px}
-.mission-next{padding:10px 12px;border-radius:14px;background:rgba(15,23,42,.48);border:1px solid rgba(148,163,184,.14);line-height:1.45;font-size:14px;color:#e2e8f0}
-.mission-next strong{color:#fff}
 .status-box{display:none;opacity:0;transform:translateY(4px);transition:opacity .2s ease,transform .2s ease}
 .status-box.is-visible{display:block;opacity:1;transform:translateY(0)}
 .status-box.is-info{background:#0f172a;color:#dbeafe;border-color:rgba(96,165,250,.26)}
@@ -911,7 +906,7 @@ body:not(.mobile-mode) .panel{display:grid;grid-template-columns:minmax(0,1fr) m
 body:not(.mobile-mode) .topbar{padding:8px 12px 6px}
 body:not(.mobile-mode) .topbar-controls{margin-bottom:6px}
 body:not(.mobile-mode) .logo{font-size:24px}
-body:not(.mobile-mode) .logo small{font-size:10px}
+body:not(.mobile-mode) .logo small{font-size:8px}
 body:not(.mobile-mode) .player-card{padding:8px 10px}
 body:not(.mobile-mode) .clock-card{padding:6px 10px;min-width:200px}
 body:not(.mobile-mode) .score{padding:7px 12px;font-size:16px}
@@ -937,20 +932,16 @@ body:not(.mobile-mode) .mission-card{gap:3px;overflow:hidden}
 body:not(.mobile-mode) .mission-kicker{font-size:9px}
 body:not(.mobile-mode) .mission-head{gap:8px}
 body:not(.mobile-mode) .mission-name{font-size:14px;line-height:1.05}
-body:not(.mobile-mode) .mission-name,body:not(.mobile-mode) .mission-details,body:not(.mobile-mode) .mission-next{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+body:not(.mobile-mode) .mission-name,body:not(.mobile-mode) .mission-details{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
 body:not(.mobile-mode) .mission-name{-webkit-line-clamp:1}
 body:not(.mobile-mode) .mission-details{font-size:10px;line-height:1.15;-webkit-line-clamp:2}
 body:not(.mobile-mode) .mission-distance{padding:4px 8px;font-size:10px}
-body:not(.mobile-mode) .mission-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-body:not(.mobile-mode) .mission-metric{padding:5px 7px;font-size:10px;line-height:1.1}
-body:not(.mobile-mode) .mission-metric strong{font-size:9px;margin-bottom:2px}
-body:not(.mobile-mode) .mission-next{display:none}
 body.mobile-mode .topbar{width:min(410px,calc(100vw - 12px))}
 body.mobile-mode #map{width:min(410px,calc(100vw - 12px));box-shadow:0 16px 44px rgba(0,0,0,.28)}
 body.mobile-mode .panel{width:min(410px,calc(100vw - 12px));max-height:min(47dvh,420px);padding:8px 10px calc(12px + env(safe-area-inset-bottom));gap:8px}
 body.mobile-mode .topbar-controls{gap:8px}
 body.mobile-mode .logo{font-size:24px}
-body.mobile-mode .logo small{font-size:10px;margin-top:2px}
+body.mobile-mode .logo small{font-size:8px;margin-top:1px}
 body.mobile-mode .brand-block{display:block;min-width:0}
 body.mobile-mode .clock-card{display:none}
 body.mobile-mode .hud-side{gap:6px}
@@ -979,10 +970,6 @@ body.mobile-mode .mission-kicker{font-size:10px}
 body.mobile-mode .mission-name{font-size:18px;line-height:1.12}
 body.mobile-mode .mission-details{font-size:12px;line-height:1.35}
 body.mobile-mode .mission-distance{padding:6px 10px;font-size:12px}
-body.mobile-mode .mission-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-body.mobile-mode .mission-metric{padding:8px;font-size:12px;line-height:1.25}
-body.mobile-mode .mission-metric strong{font-size:10px;margin-bottom:4px}
-body.mobile-mode .mission-next{padding:8px 10px;font-size:12px;line-height:1.3}
 body.mobile-mode .actions-grid{order:2;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"find check" "photo photo";gap:8px}
 body.mobile-mode .action-btn{min-height:52px;padding:9px 10px}
 body.mobile-mode .action-btn.is-compact{min-height:46px;padding:8px 10px}
@@ -1037,9 +1024,10 @@ body.mobile-mode .logo{
 body.mobile-mode .logo-title-row{gap:6px;align-items:center}
 body.mobile-mode .logo-version{font-size:10px;padding:2px 6px;border-radius:999px}
 body.mobile-mode .logo small{
-  font-size:9px;
+  font-size:8px;
   line-height:1.2;
   white-space:normal;
+  opacity:.7;
 }
 body.mobile-mode .score{
   min-width:78px;
@@ -1060,6 +1048,7 @@ body.mobile-mode .panel{
   overflow:auto;
 }
 body.mobile-mode .assistant-card{display:none}
+body.mobile-mode #missionBox{display:none}
 body.mobile-mode #missionBox,
 body.mobile-mode .status-box{padding:8px 10px}
 body.mobile-mode .mission-card{gap:5px}
@@ -1073,8 +1062,6 @@ body.mobile-mode .mission-details{
   overflow:hidden;
 }
 body.mobile-mode .mission-distance{padding:5px 8px;font-size:11px}
-body.mobile-mode .mission-metrics,
-body.mobile-mode .mission-next{display:none}
 body.mobile-mode .actions-grid{
   grid-template-columns:repeat(3,minmax(0,1fr));
   grid-template-areas:"find check photo";

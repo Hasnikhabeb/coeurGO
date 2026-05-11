@@ -500,20 +500,6 @@ function formatCount(value) {
   return Number(value || 0).toLocaleString("fr-FR");
 }
 
-function missionStepName(step) {
-  if (step <= 0) return "Reperage";
-  if (step === 1) return "Controle terrain";
-  if (step === 2) return "Photo";
-  return "Terminee";
-}
-
-function nextActionLabel(step) {
-  if (step <= 0) return "Appuie sur Trouver pour lancer la mission.";
-  if (step === 1) return "Ouvre Verifier et coche ce que tu confirmes sur place.";
-  if (step === 2) return "Ajoute une photo pour terminer la mission.";
-  return "Mission terminee.";
-}
-
 function distanceMeters(from, to) {
   if (!from || !to) return null;
   const toRadians = value => value * Math.PI / 180;
@@ -545,11 +531,6 @@ function routeKeyFor(from, to) {
   const end = normaliseLatLngPoint(to);
   if (!start || !end) return "";
   return `${start.lat.toFixed(4)},${start.lng.toFixed(4)}:${end.lat.toFixed(4)},${end.lng.toFixed(4)}`;
-}
-
-function estimateWalkMinutes(meters) {
-  if (!Number.isFinite(meters)) return null;
-  return Math.max(1, Math.round(meters / 78));
 }
 
 function formatDistance(meters) {
@@ -1897,12 +1878,6 @@ function updateMissionCard() {
             ${formatCount(aeds.length)} DAE Vernon sont charges.<br>
             ${formatCount(remaining)} DAE restent a traiter dans cette session.
           </div>
-          <div class="mission-metrics">
-            <div class="mission-metric"><strong>Catalogue</strong>${formatCount(aeds.length)} DAE</div>
-            <div class="mission-metric"><strong>Niveau</strong>${levelValue.textContent}</div>
-            <div class="mission-metric"><strong>GPS</strong>${playerPos ? "Actif" : "Off"}</div>
-          </div>
-        <div class="mission-next"><strong>Prochaine action :</strong> appuie sur Trouver ou clique un DAE orange sur la carte.</div>
       </div>
     `;
       return;
@@ -1917,12 +1892,6 @@ function updateMissionCard() {
         <div class="mission-details">
           ${formatCount(aeds.length)} DAE Vernon sont charges. Tout est valide dans cette session.
         </div>
-        <div class="mission-metrics">
-          <div class="mission-metric"><strong>Catalogue</strong>${formatCount(aeds.length)} DAE</div>
-          <div class="mission-metric"><strong>Niveau</strong>${levelValue.textContent}</div>
-          <div class="mission-metric"><strong>GPS</strong>${playerPos ? "Actif" : "Off"}</div>
-        </div>
-        <div class="mission-next"><strong>Prochaine action :</strong> ouvre le catalogue ou explore la carte.</div>
       </div>
     `;
     return;
@@ -1930,11 +1899,7 @@ function updateMissionCard() {
   const currentRouteKey = routeKeyFor(playerPos, currentAED);
   const hasDrivingRoute = Boolean(playerPos) && guidanceRouteKey === currentRouteKey && Number.isFinite(guidanceRouteDistanceMeters) && Number.isFinite(guidanceRouteDurationMinutes);
   const distanceToAed = hasDrivingRoute ? guidanceRouteDistanceMeters : distanceMeters(playerPos, currentAED);
-  const walkTime = estimateWalkMinutes(distanceToAed);
   const distanceLabel = playerPos ? formatDistance(distanceToAed) : "GPS off";
-  const travelLabel = playerPos ? (hasDrivingRoute ? formatDuration(guidanceRouteDurationMinutes) : formatDuration(walkTime)) : "GPS off";
-  const travelTitle = hasDrivingRoute ? "Trajet rapide" : "Temps a pied";
-  const gpsLabel = playerPos ? formatDistance(playerAccuracyMeters) : "Clique sur Me localiser";
   missionBox.innerHTML = `
     <div class="mission-card">
       <div class="mission-kicker">Mission Vernon active</div>
@@ -1946,15 +1911,6 @@ function updateMissionCard() {
         ${escapeHtml(currentAED.address)}<br>
         ${escapeHtml(currentAED.city)}${currentAED.postcode ? ` - ${escapeHtml(currentAED.postcode)}` : ""} - ${escapeHtml(currentAED.department)}<br>
         ${formatCount(remaining)} DAE restent a traiter dans cette session.
-      </div>
-      <div class="mission-metrics">
-        <div class="mission-metric"><strong>Distance</strong>${distanceLabel}</div>
-        <div class="mission-metric"><strong>${travelTitle}</strong>${travelLabel}</div>
-        <div class="mission-metric"><strong>Precision GPS</strong>${gpsLabel}</div>
-      </div>
-      <div class="mission-next">
-        <strong>Etape actuelle :</strong> ${missionStepName(missionStep)}.<br>
-        <strong>Action suivante :</strong> ${nextActionLabel(missionStep)}
       </div>
     </div>
   `;

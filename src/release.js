@@ -33,7 +33,7 @@
       versionEl.setAttribute("aria-label", `Version ${version}`);
     }
     if (updateEl) {
-      updateEl.textContent = `Dernier commit: ${formatDate(commitDate)}${shortHash ? ` (${shortHash})` : ""}`;
+      updateEl.textContent = `${formatDate(commitDate)}${shortHash ? ` (${shortHash})` : ""}`;
     }
   }
 
@@ -65,7 +65,7 @@
 
   refreshReleaseInfo().catch(() => {
     if (updateEl) {
-      updateEl.textContent = "Dernier commit: GitHub indisponible";
+      updateEl.textContent = "GitHub indisponible";
     }
   });
 })();

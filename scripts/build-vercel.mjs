@@ -79,7 +79,7 @@ async function injectBuildInfo() {
   );
   html = html.replace(
     /<small id="logoUpdateDate"[^>]*>.*?<\/small>/,
-    `<small id="logoUpdateDate">Dernier commit: ${buildInfo.dateLabel}</small>`
+    `<small id="logoUpdateDate">${buildInfo.dateLabel}</small>`
   );
 
   await writeFile(indexPath, html);
