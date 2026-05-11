@@ -3,15 +3,15 @@
 
   const repo = "Hasnikhabeb/coeurGO";
   const branch = "main";
-  const versionBaseSha = "7ead51c";
-  const versionBaseTenths = 1;
+  const versionBaseSha = "30cfe62";
+  const versionBaseHundredths = 110;
   const githubApi = `https://api.github.com/repos/${repo}`;
   const versionEl = document.querySelector(".logo-version");
   const updateEl = document.getElementById("logoUpdateDate");
 
-  function formatVersion(tenths) {
-    const safeTenths = Math.max(versionBaseTenths, Number.isFinite(tenths) ? tenths : versionBaseTenths);
-    return `v${Math.floor(safeTenths / 10)}.${safeTenths % 10}`;
+  function formatVersion(hundredths) {
+    const safeHundredths = Math.max(versionBaseHundredths, Number.isFinite(hundredths) ? hundredths : versionBaseHundredths);
+    return `v${(safeHundredths / 100).toFixed(2).replace(/0$/, "")}`;
   }
 
   function formatDate(isoDate) {
@@ -56,7 +56,7 @@
       fetchJson(`/commits/${branch}`)
     ]);
     const aheadBy = Number(comparison.ahead_by);
-    const version = formatVersion(versionBaseTenths + Math.max(0, Number.isFinite(aheadBy) ? aheadBy : 0));
+    const version = formatVersion(versionBaseHundredths + Math.max(0, Number.isFinite(aheadBy) ? aheadBy : 0));
     const commitDate = latestCommit?.commit?.committer?.date || latestCommit?.commit?.author?.date;
     const shortHash = latestCommit?.sha ? latestCommit.sha.slice(0, 7) : "";
 

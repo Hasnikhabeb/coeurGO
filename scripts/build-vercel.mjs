@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const distDir = join(rootDir, "dist");
-const versionBaseCommitCount = 23;
-const versionBaseTenths = 1;
+const versionBaseCommitCount = 33;
+const versionBaseHundredths = 110;
 
 const entries = [
   "index.html",
@@ -58,8 +58,9 @@ function getBuildInfo() {
   const commitCount = Number(gitValue(["rev-list", "--count", "HEAD"], String(versionBaseCommitCount)));
   const commitIsoDate = gitValue(["log", "-1", "--format=%cI"]);
   const shortHash = gitValue(["rev-parse", "--short", "HEAD"]);
-  const versionTenths = versionBaseTenths + Math.max(0, (Number.isFinite(commitCount) ? commitCount : versionBaseCommitCount) - versionBaseCommitCount);
-  const version = `v${Math.floor(versionTenths / 10)}.${versionTenths % 10}`;
+  const versionHundredths = versionBaseHundredths + Math.max(0, (Number.isFinite(commitCount) ? commitCount : versionBaseCommitCount) - versionBaseCommitCount);
+  const versionDecimal = (versionHundredths / 100).toFixed(2).replace(/0$/, "");
+  const version = `v${versionDecimal}`;
   const dateLabel = formatCommitDate(commitIsoDate);
 
   return {
