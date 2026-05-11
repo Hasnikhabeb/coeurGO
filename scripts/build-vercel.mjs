@@ -7,6 +7,7 @@ const distDir = join(rootDir, "dist");
 
 const entries = [
   "index.html",
+  "assets",
   "src",
   "store",
   "styles",
