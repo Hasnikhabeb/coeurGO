@@ -1,0 +1,1 @@
+"""CoeurGo backend package."""

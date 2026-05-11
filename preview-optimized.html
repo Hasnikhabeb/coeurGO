@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>CoeurGo – Le jeu qui sauve des vies</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+
+body{
+margin:0;
+font-family:system-ui;
+background:#020617;
+color:white;
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+#map{
+height:60vh;
+min-height:360px;
+background:
+radial-gradient(circle at 20% 20%,rgba(43,87,146,0.35),transparent 18%),
+radial-gradient(circle at 80% 30%,rgba(120,62,191,0.25),transparent 20%),
+linear-gradient(180deg,#071226 0%,#08182c 100%);
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:12px;
+padding:12px;
+background:#020617;
+position:relative;
+z-index:10;
+}
+
+.logo{
+font-size:22px;
+font-weight:bold;
+color:#ef4444;
+}
+
+.hud{
+flex:1;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.topline{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+}
+
+.score{
+display:inline-flex;
+align-items:center;
+gap:10px;
+padding:8px 14px;
+border:3px solid #e53b3b;
+border-radius:4px;
+background:#060b1f;
+box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08);
+font-size:20px;
+font-weight:800;
+white-space:nowrap;
+}
+
+.score-icon{
+width:26px;
+height:26px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+filter:drop-shadow(0 0 8px rgba(255,199,95,0.35));
+}
+
+.score-icon svg{
+width:26px;
+height:26px;
+display:block;
+}
+
+.level-card{
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 12px;
+border-radius:22px;
+background:
+radial-gradient(circle at 18% 10%,rgba(76,218,255,0.45),transparent 18%),
+radial-gradient(circle at 50% 0%,rgba(255,102,205,0.28),transparent 16%),
+radial-gradient(circle at 84% 16%,rgba(186,86,255,0.4),transparent 18%),
+linear-gradient(135deg,#194d84 0%,#25429d 42%,#6823a8 100%);
+box-shadow:0 14px 30px rgba(0,0,0,0.3);
+position:relative;
+overflow:hidden;
+}
+
+.level-badge,
+.level-reward{
+width:42px;
+height:42px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+flex-shrink:0;
+}
+
+.level-badge{
+background:radial-gradient(circle at 30% 30%,#60dbff,#0d5eff 65%,#173069 100%);
+box-shadow:0 0 16px rgba(63,193,255,0.7);
+border:3px solid rgba(37,236,255,0.45);
+}
+
+.level-reward{
+background:radial-gradient(circle at 30% 30%,#ff7cf0,#7b36ff 70%,#2e136b 100%);
+box-shadow:0 0 16px rgba(228,91,255,0.7);
+border:3px solid rgba(255,146,252,0.4);
+}
+
+.level-content{
+flex:1;
+min-width:0;
+}
+
+.level-title{
+font-size:13px;
+font-weight:800;
+letter-spacing:1.9px;
+text-transform:uppercase;
+margin-bottom:6px;
+text-align:center;
+text-shadow:0 1px 8px rgba(255,255,255,0.18);
+}
+
+.level-track{
+position:relative;
+height:26px;
+padding:3px;
+border-radius:999px;
+background:rgba(8,11,34,0.62);
+box-shadow:
+inset 0 0 0 1px rgba(255,255,255,0.18),
+0 0 14px rgba(0,0,0,0.25);
+overflow:hidden;
+}
+
+.level-fill{
+height:100%;
+width:0%;
+border-radius:999px;
+background:linear-gradient(90deg,#f7c948 0%,#ffae31 24%,#ff7a18 55%,#ff3b5c 82%,#9b37ff 100%);
+box-shadow:
+0 0 14px rgba(255,129,65,0.6),
+inset 0 0 10px rgba(255,255,255,0.18);
+transition:width 0.25s ease;
+}
+
+.level-steps{
+position:absolute;
+inset:3px;
+display:grid;
+grid-template-columns:repeat(10,1fr);
+gap:3px;
+pointer-events:none;
+}
+
+.level-steps span{
+background:rgba(255,255,255,0.06);
+border-right:1px solid rgba(255,255,255,0.26);
+}
+
+.level-meta{
+display:flex;
+justify-content:center;
+gap:14px;
+margin-top:6px;
+font-size:12px;
+font-weight:700;
+}
+
+.level-pill{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:4px 12px;
+border-radius:999px;
+background:#081a59;
+box-shadow:inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+@media (max-width:640px){
+#map{
+height:52vh;
+min-height:280px;
+}
+
+.level-card{
+padding:8px 10px;
+gap:8px;
+}
+
+.level-badge,
+.level-reward{
+width:36px;
+height:36px;
+font-size:17px;
+}
+
+.level-title{
+font-size:11px;
+}
+
+.level-meta{
+gap:8px;
+font-size:11px;
+}
+
+.score{
+font-size:18px;
+padding:6px 10px;
+}
+}
+
+.radar{
+position:absolute;
+bottom:150px;
+right:20px;
+width:110px;
+height:110px;
+border-radius:50%;
+border:3px solid #ef4444;
+background:rgba(0,0,0,0.7);
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+}
+
+.panel{
+min-height:220px;
+padding:15px;
+background:#020617;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#ef4444;
+color:white;
+font-weight:bold;
+margin-top:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+<div class="hud">
+
+<div class="topline">
+<div class="logo">❤️ CoeurGo</div>
+
+<div class="score">
+<span class="score-icon" aria-hidden="true">
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="heartBase" x1="14" y1="12" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+<stop stop-color="#ff7b6b"/>
+<stop offset=".45" stop-color="#ff2a3d"/>
+<stop offset="1" stop-color="#c40028"/>
+</linearGradient>
+<linearGradient id="boltFill" x1="28" y1="18" x2="42" y2="49" gradientUnits="userSpaceOnUse">
+<stop stop-color="#fff47a"/>
+<stop offset=".5" stop-color="#ffd400"/>
+<stop offset="1" stop-color="#ffae00"/>
+</linearGradient>
+<linearGradient id="pinFill" x1="31" y1="37" x2="50" y2="57" gradientUnits="userSpaceOnUse">
+<stop stop-color="#dff9ff"/>
+<stop offset=".55" stop-color="#8ed8ea"/>
+<stop offset="1" stop-color="#55b7d8"/>
+</linearGradient>
+</defs>
+<path d="M32 57C28 54 12 41 12 27.2 12 19.7 17.4 14 24.8 14c3.6 0 6.3 1.1 7.8 4 1.5-2.9 4.2-4 7.8-4C47.6 14 53 19.7 53 27.2 53 41 37 54 32 57Z" fill="#3b1247"/>
+<path d="M32 53C28.7 50.6 16 39.4 16 28.2 16 22.4 20 18 25.4 18c3.6 0 5.8 1.4 6.6 3.9.8-2.5 3-3.9 6.6-3.9C44 18 48 22.4 48 28.2 48 39.4 35.3 50.6 32 53Z" fill="url(#heartBase)"/>
+<ellipse cx="25" cy="23.5" rx="7.5" ry="4.7" transform="rotate(-28 25 23.5)" fill="#ffffff" opacity=".7"/>
+<ellipse cx="19.5" cy="28.2" rx="2.1" ry="3" transform="rotate(28 19.5 28.2)" fill="#ffffff" opacity=".9"/>
+<path d="M34.2 18.8 24.6 35h8l-2.7 12.2L42.8 30h-8.4l-.2-11.2Z" fill="#fff" opacity=".95"/>
+<path d="M36.6 17.2 27.1 33.4h7.5l-2.4 10.2L45.4 28h-8.1l-.7-10.8Z" fill="url(#boltFill)"/>
+<path d="M38 36.8c6.8 0 11.8 4.7 11.8 10.7 0 7.6-8.5 13.2-11.8 15.4-3.3-2.2-11.8-7.8-11.8-15.4 0-6 5-10.7 11.8-10.7Z" fill="#153c7a"/>
+<path d="M38 40.2c4.8 0 8.3 3.1 8.3 7.2 0 4.9-5.1 8.8-8.3 11.1-3.2-2.3-8.3-6.2-8.3-11.1 0-4.1 3.5-7.2 8.3-7.2Z" fill="url(#pinFill)"/>
+<circle cx="38" cy="47.3" r="3.1" fill="#2f8ce0"/>
+</svg>
+</span><span id="score">0</span>
+</div>
+</div>
+
+<div class="level-card">
+<div class="level-badge">🛡️</div>
+
+<div class="level-content">
+<div class="level-title">Levels</div>
+
+<div class="level-track">
+<div class="level-fill" id="levelFill"></div>
+<div class="level-steps">
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+
+<div class="level-meta">
+<div class="level-pill">Niveau <span id="levelValue">1</span></div>
+<div class="level-pill"><span id="levelPercent">0</span>%</div>
+</div>
+</div>
+
+<div class="level-reward">🎁</div>
+</div>
+
+</div>
+
+<div id="map"></div>
+
+<div class="radar" id="radar">
+📡 scan
+</div>
+
+<div class="panel">
+
+<div id="missionBox">
+Approche toi d’un DAE pour lancer une mission
+</div>
+
+<button onclick="findAED()">📍 Trouver le DAE (+10)</button>
+
+<button onclick="checkAED()">🔎 Vérifier le DAE (+20)</button>
+
+<button onclick="photoAED()">📷 Photo validation (+20)</button>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+let score=0
+let missionStep=0
+let currentAED=null
+let playerPos=null
+let playerMarker=null
+let hasCenteredOnPlayer=false
+let map=null
+let iconGreen=null
+let iconYellow=null
+let iconRed=null
+let baseLayer=null
+const missionBox=document.getElementById("missionBox")
+const radarBox=document.getElementById("radar")
+const scoreBox=document.getElementById("score")
+const levelFill=document.getElementById("levelFill")
+const levelValue=document.getElementById("levelValue")
+const levelPercent=document.getElementById("levelPercent")
+const MAX_MISSION_DISTANCE=120
+const POINTS_PER_LEVEL=50
+
+const vernon={lat:49.0929,lng:1.4883}
+
+
+/* base DAE */
+
+const aeds=[
+
+{
+name:"Mairie de Vernon",
+lat:49.0915,
+lng:1.4889,
+status:"verified",
+marker:null
+},
+
+{
+name:"Gare de Vernon",
+lat:49.0919,
+lng:1.4780,
+status:"to_verify",
+marker:null
+},
+
+{
+name:"Gymnase Ariane",
+lat:49.0957,
+lng:1.4963,
+status:"to_verify",
+marker:null
+},
+
+{
+name:"Centre commercial Vernonnet",
+lat:49.1012,
+lng:1.4951,
+status:"problem",
+marker:null
+}
+
+]
+
+
+/* affichage DAE */
+
+function renderAEDMarkers(){
+
+aeds.forEach(a=>{
+
+let icon=iconYellow
+
+if(a.status==="verified") icon=iconGreen
+if(a.status==="problem") icon=iconRed
+
+a.marker=L.marker([a.lat,a.lng],{icon:icon}).addTo(map)
+
+a.marker.on("click",()=>{
+
+currentAED=a
+missionStep=0
+
+missionBox.innerHTML=
+"❤️ Mission<br>"+a.name
+
+})
+
+})
+
+}
+
+function renderFallbackMap(){
+
+const fallbackRoads=[
+[[49.1035,1.4745],[49.0988,1.4815],[49.0948,1.4885],[49.0898,1.4968]],
+[[49.1008,1.5015],[49.096,1.4948],[49.0915,1.4878],[49.0878,1.482]],
+[[49.0978,1.4738],[49.0958,1.484],[49.0943,1.4942]],
+[[49.1015,1.4862],[49.0945,1.4868],[49.0895,1.4875]]
+]
+
+L.circle([vernon.lat,vernon.lng],{
+radius:1700,
+color:"#31c4ff",
+weight:2,
+opacity:0.35,
+fillColor:"#123b63",
+fillOpacity:0.18
+}).addTo(map)
+
+L.polygon([
+[49.1045,1.4755],
+[49.102,1.491],
+[49.0955,1.5008],
+[49.089,1.496],
+[49.0868,1.4824],
+[49.093,1.4748]
+],{
+color:"#1e6bb8",
+weight:1,
+opacity:0.45,
+fillColor:"#0c2747",
+fillOpacity:0.3
+}).addTo(map)
+
+fallbackRoads.forEach(points=>{
+L.polyline(points,{
+color:"#8ee7ff",
+weight:5,
+opacity:0.35
+}).addTo(map)
+
+L.polyline(points,{
+color:"#d7fbff",
+weight:2,
+opacity:0.55,
+dashArray:"10 8"
+}).addTo(map)
+})
+
+aeds.forEach(a=>{
+L.circle([a.lat,a.lng],{
+radius:130,
+color:"#ef4444",
+weight:1,
+opacity:0.35,
+fillColor:"#ef4444",
+fillOpacity:0.12
+}).addTo(map)
+})
+
+}
+
+function initMap(){
+
+if(typeof L==="undefined"){
+document.getElementById("map").innerHTML="<div style='padding:24px;text-align:center;color:white'>Impossible de charger la carte</div>"
+missionBox.innerHTML="La librairie de carte ne s'est pas chargée"
+return
+}
+
+iconGreen=L.divIcon({
+html:"<div style='font-size:30px;filter:drop-shadow(0 0 6px rgba(16,185,129,.65))'>🟢</div>",
+className:"dae-icon"
+})
+
+iconYellow=L.divIcon({
+html:"<div style='font-size:30px;filter:drop-shadow(0 0 6px rgba(245,158,11,.7))'>🟡</div>",
+className:"dae-icon"
+})
+
+iconRed=L.divIcon({
+html:"<div style='font-size:30px;filter:drop-shadow(0 0 6px rgba(239,68,68,.75))'>🔴</div>",
+className:"dae-icon"
+})
+
+map=L.map("map").setView([vernon.lat,vernon.lng],14)
+
+renderFallbackMap()
+
+baseLayer=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+maxZoom:19,
+opacity:0.82,
+attribution:"&copy; OpenStreetMap contributors"
+})
+
+baseLayer.on("tileerror",()=>{
+missionBox.innerHTML="Carte indisponible, mode secours activé"
+})
+
+baseLayer.addTo(map)
+
+renderAEDMarkers()
+
+setTimeout(()=>map.invalidateSize(),120)
+
+}
+
+window.addEventListener("load",initMap)
+
+window.addEventListener("resize",()=>{
+if(map){
+map.invalidateSize()
+}
+})
+
+
+/* GPS joueur */
+
+if(navigator.geolocation){
+
+navigator.geolocation.watchPosition(pos=>{
+
+const lat=pos.coords.latitude
+const lng=pos.coords.longitude
+
+playerPos={lat,lng}
+
+if(!map) return
+
+if(!playerMarker){
+playerMarker=L.circleMarker([lat,lng],{
+radius:8,
+color:"#ef4444"
+}).addTo(map)
+} else {
+playerMarker.setLatLng([lat,lng])
+}
+
+if(!hasCenteredOnPlayer){
+map.setView([lat,lng],15)
+hasCenteredOnPlayer=true
+}
+
+updateRadar()
+
+},()=>{
+missionBox.innerHTML="Active la géolocalisation pour jouer"
+},{
+enableHighAccuracy:true,
+maximumAge:5000,
+timeout:10000
+})
+
+}
+
+
+/* distance */
+
+function distance(lat1,lon1,lat2,lon2){
+
+const R=6371
+
+const dLat=(lat2-lat1)*Math.PI/180
+const dLon=(lon2-lon1)*Math.PI/180
+
+const a=
+Math.sin(dLat/2)*Math.sin(dLat/2)+
+Math.cos(lat1*Math.PI/180)*
+Math.cos(lat2*Math.PI/180)*
+Math.sin(dLon/2)*Math.sin(dLon/2)
+
+const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))
+
+return R*c*1000
+
+}
+
+
+/* radar */
+
+function updateRadar(){
+
+if(!playerPos) return
+
+let min=999999
+
+aeds.forEach(a=>{
+
+const d=distance(playerPos.lat,playerPos.lng,a.lat,a.lng)
+
+if(d<min) min=d
+
+})
+
+radarBox.innerHTML=
+"📡 DAE<br>"+Math.round(min)+" m"
+
+}
+
+function getDistanceToCurrentAED(){
+
+if(!playerPos||!currentAED) return null
+
+return distance(playerPos.lat,playerPos.lng,currentAED.lat,currentAED.lng)
+
+}
+
+function isPlayerNearCurrentAED(){
+
+const currentDistance=getDistanceToCurrentAED()
+
+return currentDistance!==null&&currentDistance<=MAX_MISSION_DISTANCE
+
+}
+
+
+/* actions jeu */
+
+function findAED(){
+
+if(!currentAED){
+alert("Sélectionne un DAE sur la carte")
+return
+}
+
+if(!isPlayerNearCurrentAED()){
+alert("Approche-toi du DAE pour lancer la mission")
+return
+}
+
+if(missionStep>0){
+alert("Mission déjà commencée")
+return
+}
+
+score+=10
+missionStep=1
+updateScore()
+
+missionBox.innerHTML=
+"📍 DAE trouvé<br>+10 points"
+
+}
+
+
+
+function checkAED(){
+
+if(missionStep<1){
+alert("Tu dois d'abord trouver le DAE")
+return
+}
+
+if(!isPlayerNearCurrentAED()){
+alert("Tu es trop loin du DAE")
+return
+}
+
+if(missionStep>1){
+alert("Vérification déjà faite")
+return
+}
+
+score+=20
+missionStep=2
+updateScore()
+
+missionBox.innerHTML=
+"🔎 DAE vérifié<br>+20 points"
+
+}
+
+
+
+function photoAED(){
+
+if(missionStep<2){
+alert("Tu dois d'abord vérifier le DAE")
+return
+}
+
+if(missionStep>2){
+alert("Photo déjà validée")
+return
+}
+
+if(!isPlayerNearCurrentAED()){
+alert("Tu es trop loin du DAE")
+return
+}
+
+score+=20
+missionStep=3
+updateScore()
+
+missionBox.innerHTML=
+"📷 Photo validée<br>+20 points<br>Mission terminée"
+
+validateAED()
+
+}
+
+
+
+function validateAED(){
+
+if(!currentAED) return
+
+currentAED.status="verified"
+
+if(currentAED.marker){
+currentAED.marker.setIcon(iconGreen)
+}
+
+missionStep=0
+currentAED=null
+
+}
+
+
+
+function updateScore(){
+
+scoreBox.innerText=score
+updateLevel()
+
+}
+
+function updateLevel(){
+
+const level=Math.floor(score/POINTS_PER_LEVEL)+1
+const progress=Math.floor(score%POINTS_PER_LEVEL)/POINTS_PER_LEVEL*100
+
+levelValue.innerText=level
+levelPercent.innerText=Math.round(progress)
+levelFill.style.width=progress+"%"
+
+}
+
+updateLevel()
+
+</script>
+
+</body>
+</html>

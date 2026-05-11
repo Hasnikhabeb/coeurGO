@@ -1,0 +1,3025 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Action Citrouilles - Lions Club Gisors les Templiers</title>
+  <meta name="description" content="Présentation sur fond blanc de l'Action Citrouilles du Lions Club Gisors les Templiers." />
+  <style>
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    :root {
+      --blue: #063f8f;
+      --blue-2: #0f5fb8;
+      --gold: #f2bf2b;
+      --orange: #ec6c1a;
+      --green: #31754a;
+      --ink: #18212d;
+      --muted: #5d6672;
+      --line: #d8dee8;
+      --soft: #f5f7fa;
+      --paper: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .document {
+      width: 210mm;
+      margin: 0 auto;
+      background: var(--paper);
+    }
+
+    .page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      overflow: hidden;
+      background: var(--paper);
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .page:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    .page-inner {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      padding: 13mm 14mm 12mm;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 5mm;
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 4mm;
+      background: linear-gradient(90deg, var(--blue), var(--gold), var(--orange));
+    }
+
+    .page::after {
+      content: "";
+      position: absolute;
+      right: -38mm;
+      bottom: -42mm;
+      width: 96mm;
+      height: 104mm;
+      border: 20mm solid rgba(242, 191, 43, 0.16);
+      border-radius: 50%;
+    }
+
+    .blank-page::before,
+    .blank-page::after {
+      display: none;
+    }
+
+    .blank-page .page-inner {
+      padding: 14mm;
+      grid-template-rows: 1fr auto;
+      gap: 0;
+    }
+
+    .header,
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8mm;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 4mm;
+      min-width: 0;
+    }
+
+    .brand img {
+      display: block;
+      object-fit: contain;
+    }
+
+    .brand .lions-logo {
+      width: 18mm;
+      height: 18mm;
+    }
+
+    .brand .club-logo {
+      width: 15mm;
+      height: 20mm;
+    }
+
+    .home-header {
+      align-items: center;
+    }
+
+    .home-club-logo {
+      width: 30mm;
+      height: 49mm;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .home-header .brand {
+      gap: 5mm;
+    }
+
+    .home-header .lions-logo {
+      width: 22mm;
+      height: 22mm;
+    }
+
+    .home-header .home-brand-text {
+      display: grid;
+      gap: 0.8mm;
+      color: var(--muted);
+      font-size: 9.4pt;
+      line-height: 1.16;
+    }
+
+    .home-header .home-brand-text strong {
+      color: var(--blue);
+      font-size: 12.3pt;
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+    }
+
+    .home-header .home-brand-text .club-line {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .brand-text {
+      font-size: 9pt;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    .brand-text strong {
+      display: block;
+      color: var(--blue);
+      font-size: 11pt;
+      line-height: 1.15;
+    }
+
+    .page-label {
+      color: var(--blue);
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 8pt;
+      border-top: 0.3mm solid var(--line);
+      padding-top: 4mm;
+    }
+
+    .page-number {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3.8mm;
+      align-content: center;
+    }
+
+    .hero-copy {
+      display: grid;
+      align-content: start;
+      gap: 3.5mm;
+      max-width: 132mm;
+    }
+
+    .kicker {
+      color: var(--orange);
+      font-size: 10pt;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      color: var(--blue);
+      font-size: 41pt;
+      line-height: 0.95;
+      font-weight: 800;
+    }
+
+    h2 {
+      color: var(--blue);
+      font-size: 25pt;
+      line-height: 1.04;
+      font-weight: 800;
+    }
+
+    h3 {
+      color: var(--ink);
+      font-size: 13pt;
+      line-height: 1.18;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 12.2pt;
+      line-height: 1.45;
+    }
+
+    .lead strong {
+      color: var(--ink);
+    }
+
+    .hero-photo,
+    .large-photo,
+    .small-photo,
+    .closing-photo {
+      position: relative;
+      overflow: hidden;
+      border-radius: 6px;
+      border: 0.35mm solid var(--line);
+      background: var(--soft);
+    }
+
+    .hero-photo img,
+    .large-photo img,
+    .small-photo img,
+    .closing-photo img,
+    .photo-strip img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .hero-photo {
+      height: 96mm;
+      min-height: 0;
+    }
+
+    .hero-photo img {
+      object-position: center center;
+    }
+
+    .caption-band {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 3.5mm 4.5mm;
+      background: rgba(255, 255, 255, 0.9);
+      border-top: 0.3mm solid var(--line);
+      color: var(--ink);
+      font-size: 8.8pt;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3.5mm;
+    }
+
+    .metric {
+      min-height: 20mm;
+      padding: 3.5mm;
+      border: 0.3mm solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+      display: grid;
+      align-content: start;
+      gap: 1.5mm;
+    }
+
+    .metric strong {
+      color: var(--blue);
+      font-size: 14pt;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 8.5pt;
+      line-height: 1.25;
+    }
+
+    .home-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4mm;
+    }
+
+    .home-panel {
+      padding: 4mm;
+      border-radius: 6px;
+      border: 0.3mm solid var(--line);
+      background: white;
+      display: grid;
+      gap: 2.5mm;
+      align-content: start;
+    }
+
+    .home-panel.impact {
+      border-left: 1.2mm solid var(--green);
+    }
+
+    .home-panel.difference {
+      border-left: 1.2mm solid var(--orange);
+    }
+
+    .home-panel small {
+      color: var(--orange);
+      font-size: 7.8pt;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .home-panel h3 {
+      color: var(--blue);
+      font-size: 11.4pt;
+      line-height: 1.12;
+    }
+
+    .home-list {
+      display: grid;
+      gap: 1.2mm;
+      color: var(--muted);
+      font-size: 8.4pt;
+      line-height: 1.22;
+    }
+
+    .home-list span::before {
+      content: "• ";
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .cause-intro {
+      color: var(--muted);
+      font-size: 8.2pt;
+      line-height: 1.25;
+    }
+
+    .cause-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.8mm;
+    }
+
+    .cause-tags span {
+      padding: 1.6mm 2.2mm;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 7.7pt;
+      font-weight: 700;
+      line-height: 1;
+      border: 0.25mm solid var(--line);
+    }
+
+    .causes-banner {
+      border-radius: 6px;
+      border: 0.35mm solid rgba(216, 222, 232, 0.9);
+      background: linear-gradient(180deg, #fffaf0 0%, #ffffff 70%);
+      overflow: hidden;
+      padding: 3.2mm;
+      display: grid;
+      gap: 2.4mm;
+    }
+
+    .causes-title {
+      color: var(--blue);
+      font-size: 10.5pt;
+      line-height: 1.12;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .causes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.2mm;
+    }
+
+    .cause-card {
+      min-height: 22.5mm;
+      padding: 2.4mm;
+      border: 0.28mm solid var(--line);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      display: grid;
+      grid-template-columns: 17mm 1fr;
+      gap: 2.4mm;
+      align-items: center;
+    }
+
+    .cause-visual {
+      width: 16mm;
+      height: 16mm;
+      border-radius: 50%;
+      border: 0.65mm solid var(--cause-color);
+      background-image: url("images/causes-citrouilles-destinations.png");
+      background-size: 182mm auto;
+      background-position: var(--bg-x) var(--bg-y);
+      background-repeat: no-repeat;
+      background-color: white;
+      box-shadow: 0 1mm 2.5mm rgba(13, 30, 53, 0.14);
+    }
+
+    .cause-card h3 {
+      color: var(--cause-color);
+      font-size: 8.6pt;
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    .cause-card p {
+      margin-top: 1mm;
+      color: var(--ink);
+      font-size: 7pt;
+      line-height: 1.24;
+    }
+
+    .cause-cancer {
+      --cause-color: #d4aa12;
+      --bg-x: -4.6mm;
+      --bg-y: -5.1mm;
+    }
+
+    .cause-autism {
+      --cause-color: #7140a0;
+      --bg-x: -37.8mm;
+      --bg-y: -5.1mm;
+    }
+
+    .cause-alzheimer {
+      --cause-color: #3a854b;
+      --bg-x: -70.4mm;
+      --bg-y: -5.1mm;
+    }
+
+    .cause-guide {
+      --cause-color: #0d5b95;
+      --bg-x: -103mm;
+      --bg-y: -5.1mm;
+    }
+
+    .cause-hospital {
+      --cause-color: #cf3322;
+      --bg-x: -135.2mm;
+      --bg-y: -5.1mm;
+    }
+
+    .cause-children {
+      --cause-color: #df6b1c;
+      --bg-x: -160.2mm;
+      --bg-y: -5.1mm;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 8mm;
+      align-items: start;
+    }
+
+    .text-stack {
+      display: grid;
+      gap: 5mm;
+      align-content: start;
+    }
+
+    .body-copy {
+      display: grid;
+      gap: 3.5mm;
+      color: var(--muted);
+      font-size: 10.4pt;
+      line-height: 1.46;
+    }
+
+    .body-copy strong {
+      color: var(--ink);
+    }
+
+    .large-photo {
+      height: 151mm;
+    }
+
+    .small-photo {
+      height: 61mm;
+    }
+
+    .photo-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5mm;
+    }
+
+    .point-list {
+      display: grid;
+      gap: 3mm;
+    }
+
+    .point {
+      display: grid;
+      grid-template-columns: 8mm 1fr;
+      gap: 3mm;
+      align-items: start;
+      color: var(--muted);
+      font-size: 10pt;
+      line-height: 1.38;
+    }
+
+    .point-mark {
+      width: 8mm;
+      height: 8mm;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 8pt;
+      font-weight: 700;
+    }
+
+    .point strong {
+      color: var(--ink);
+    }
+
+    .history-page .page-inner {
+      grid-template-rows: 1fr auto;
+      padding: 10mm 14mm 10mm;
+      gap: 4mm;
+    }
+
+    .history-layout {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      grid-template-rows: auto 1fr;
+      gap: 3.5mm 5mm;
+      align-content: stretch;
+      height: 100%;
+    }
+
+    .history-stack,
+    .history-side {
+      display: grid;
+      gap: 2.6mm;
+      align-content: start;
+    }
+
+    .history-kicker {
+      color: var(--orange);
+      font-size: 9pt;
+      font-weight: 800;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .history-title {
+      color: var(--blue);
+      font-size: 25pt;
+      line-height: 1.02;
+      font-weight: 800;
+    }
+
+    .history-subtitle {
+      color: var(--ink);
+      font-size: 12pt;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .history-lead,
+    .history-card,
+    .history-conclusion {
+      border: 0.3mm solid var(--line);
+      border-radius: 6px;
+      background: white;
+    }
+
+    .history-lead {
+      padding: 3.5mm 4mm;
+      border-left: 1.2mm solid var(--orange);
+      color: var(--muted);
+      font-size: 9pt;
+      line-height: 1.36;
+    }
+
+    .history-card {
+      padding: 3mm;
+      display: grid;
+      gap: 1.4mm;
+    }
+
+    .history-card h3 {
+      color: var(--blue);
+      font-size: 10.4pt;
+      line-height: 1.13;
+    }
+
+    .history-card p,
+    .history-card li,
+    .history-conclusion {
+      color: var(--muted);
+      font-size: 8.2pt;
+      line-height: 1.29;
+    }
+
+    .history-card strong,
+    .history-conclusion strong {
+      color: var(--ink);
+    }
+
+    .history-card ul {
+      margin: 0;
+      padding-left: 4mm;
+    }
+
+    .history-photo {
+      height: 88mm;
+    }
+
+    .history-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .history-stat {
+      padding: 3.4mm 4mm;
+      border-radius: 6px;
+      background: var(--blue);
+      color: white;
+      display: grid;
+      gap: 1mm;
+    }
+
+    .history-stat strong {
+      color: white;
+      font-size: 22pt;
+      line-height: 1;
+    }
+
+    .history-stat span {
+      font-size: 8.7pt;
+      line-height: 1.24;
+    }
+
+    .history-cycle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2mm;
+    }
+
+    .cycle-item {
+      min-height: 13.5mm;
+      padding: 2.3mm;
+      border: 0.3mm solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 8pt;
+      line-height: 1.18;
+      font-weight: 700;
+    }
+
+    .history-causes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.7mm;
+    }
+
+    .history-causes span {
+      padding: 1.7mm 2mm;
+      border-radius: 999px;
+      border: 0.25mm solid var(--line);
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 7.4pt;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .history-conclusion {
+      padding: 3.5mm 4mm;
+      border-left: 1.2mm solid var(--green);
+      background: linear-gradient(90deg, rgba(49, 117, 74, 0.08), white);
+    }
+
+    .history-wide {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3mm;
+      align-self: end;
+    }
+
+    .history-gallery-strip figure {
+      height: 58mm;
+    }
+
+    .history-gallery-strip img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .history-gallery-strip figure:nth-child(2) img {
+      object-position: center 62%;
+    }
+
+    .history-gallery-strip figure:nth-child(3) img {
+      object-position: center 58%;
+    }
+
+    .history-milestone {
+      min-height: 23mm;
+      padding: 3mm;
+      border-radius: 6px;
+      border: 0.3mm solid var(--line);
+      border-top: 1mm solid var(--orange);
+      background: white;
+      display: grid;
+      gap: 1.2mm;
+      align-content: start;
+    }
+
+    .history-milestone strong {
+      color: var(--blue);
+      font-size: 9.4pt;
+      line-height: 1.12;
+    }
+
+    .history-milestone span {
+      color: var(--muted);
+      font-size: 7.8pt;
+      line-height: 1.25;
+    }
+
+    .loop-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto;
+      gap: 4mm;
+      align-content: stretch;
+      height: 100%;
+    }
+
+    .method-page .page-inner {
+      grid-template-rows: 1fr auto;
+      padding-top: 10mm;
+      gap: 4mm;
+    }
+
+    .loop-intro {
+      padding: 5mm 6mm;
+      border-left: 1.4mm solid var(--orange);
+      background: var(--soft);
+      border-radius: 6px;
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 3mm 6mm;
+      align-items: center;
+    }
+
+    .loop-intro h2 {
+      font-size: 24pt;
+    }
+
+    .loop-intro .lead {
+      font-size: 11pt;
+      line-height: 1.34;
+    }
+
+    .loop-intro .method-note {
+      padding: 3mm;
+      border-left: 0.8mm solid var(--green);
+      background: white;
+      border-radius: 6px;
+      color: var(--ink);
+      font-size: 9.2pt;
+      line-height: 1.32;
+      font-weight: 700;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 3mm;
+      height: 100%;
+    }
+
+    .step {
+      padding: 2.4mm;
+      min-height: 0;
+      height: 100%;
+      border: 0.3mm solid var(--line);
+      border-radius: 6px;
+      background: white;
+      display: grid;
+      grid-template-columns: 8mm 1fr;
+      grid-template-rows: auto auto auto auto minmax(18mm, 1fr);
+      gap: 1.7mm 2.2mm;
+      align-content: stretch;
+    }
+
+    .step-photo {
+      grid-column: 1 / -1;
+      height: 42mm;
+      margin: -2.4mm -2.4mm 0;
+      overflow: hidden;
+      border-bottom: 0.3mm solid var(--line);
+      background: var(--soft);
+    }
+
+    .step-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .step-number {
+      width: 8mm;
+      height: 8mm;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--gold);
+      color: var(--blue);
+      font-size: 8pt;
+      font-weight: 800;
+    }
+
+    .step h3 {
+      color: var(--blue);
+      font-size: 11.2pt;
+      align-self: center;
+    }
+
+    .step p {
+      grid-column: 1 / -1;
+      color: var(--muted);
+      font-size: 8.3pt;
+      line-height: 1.25;
+    }
+
+    .step .step-takeaway {
+      grid-column: 1 / -1;
+      color: var(--ink);
+      font-size: 8.3pt;
+      line-height: 1.22;
+      font-weight: 700;
+    }
+
+    .step-detail {
+      grid-column: 1 / -1;
+      align-self: stretch;
+      padding: 2.4mm;
+      border-radius: 6px;
+      border: 0.25mm solid rgba(216, 222, 232, 0.95);
+      border-left: 0.9mm solid var(--orange);
+      background: linear-gradient(180deg, rgba(242, 191, 43, 0.1), rgba(245, 247, 250, 0.96));
+      color: var(--ink);
+      font-size: 7.6pt;
+      line-height: 1.25;
+    }
+
+    .step-detail strong {
+      display: block;
+      margin-bottom: 0.8mm;
+      color: var(--blue);
+      font-size: 7.6pt;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .method-closing {
+      grid-column: 1 / -1;
+      padding: 4mm 5mm;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--blue), #145aa9);
+      color: white;
+      font-size: 15pt;
+      line-height: 1.18;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 5mm;
+      height: 178mm;
+    }
+
+    .gallery-main {
+      display: grid;
+      gap: 5mm;
+      grid-template-rows: 1fr 0.72fr;
+    }
+
+    .gallery-side {
+      display: grid;
+      gap: 5mm;
+      grid-template-rows: 1fr 1fr 1fr;
+    }
+
+    .gallery .large-photo,
+    .gallery .small-photo {
+      height: auto;
+      min-height: 0;
+    }
+
+    .impact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7mm;
+      align-items: stretch;
+    }
+
+    .impact-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4mm;
+    }
+
+    .impact-stat {
+      min-height: 38mm;
+      padding: 5mm;
+      border: 0.3mm solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+      display: grid;
+      align-content: start;
+      gap: 2mm;
+    }
+
+    .impact-stat strong {
+      color: var(--blue);
+      font-size: 22pt;
+      line-height: 1;
+    }
+
+    .impact-stat span {
+      color: var(--muted);
+      font-size: 9pt;
+      line-height: 1.32;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 3mm;
+      margin-top: 4mm;
+    }
+
+    .benefit {
+      padding: 3.5mm 4mm;
+      border-left: 1mm solid var(--green);
+      background: var(--soft);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 9.7pt;
+      line-height: 1.35;
+    }
+
+    .benefit strong {
+      color: var(--ink);
+    }
+
+    .impact-year-page .page-inner {
+      padding: 12mm 14mm 10mm;
+      gap: 3.6mm;
+    }
+
+    .impact-year-layout {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 3.6mm;
+      min-height: 0;
+    }
+
+    .impact-year-hero {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 5mm;
+      align-items: center;
+    }
+
+    .impact-year-intro {
+      grid-column: 1 / -1;
+      padding: 4.2mm 5mm;
+      border-left: 1.4mm solid var(--orange);
+      border-radius: 6px;
+      background: var(--soft);
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 4mm;
+      align-items: center;
+    }
+
+    .impact-year-intro h2 {
+      font-size: 25pt;
+      line-height: 1.02;
+    }
+
+    .impact-year-intro .lead {
+      font-size: 10.4pt;
+      line-height: 1.31;
+    }
+
+    .impact-year-photo {
+      height: 100%;
+    }
+
+    .impact-year-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .impact-year-photo figcaption {
+      font-size: 8.8pt;
+      line-height: 1.2;
+    }
+
+    .impact-year-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3mm;
+    }
+
+    .year-metric {
+      min-height: 26mm;
+      padding: 3mm 3.2mm;
+      border: 0.3mm solid var(--line);
+      border-top: 1.2mm solid var(--gold);
+      border-radius: 6px;
+      background: linear-gradient(180deg, #fffdf4, var(--soft));
+      display: grid;
+      align-content: start;
+      gap: 1.6mm;
+    }
+
+    .year-metric strong {
+      color: var(--blue);
+      font-size: 18pt;
+      line-height: 0.98;
+    }
+
+    .year-metric span {
+      color: var(--muted);
+      font-size: 8.1pt;
+      line-height: 1.24;
+      font-weight: 700;
+    }
+
+    .impact-year-body {
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 4mm;
+      min-height: 0;
+    }
+
+    .hours-card {
+      padding: 4mm;
+      border: 0.3mm solid var(--line);
+      border-radius: 6px;
+      background: white;
+      display: grid;
+      gap: 2.6mm;
+      align-content: stretch;
+      min-height: 0;
+    }
+
+    .hours-card h3 {
+      color: var(--blue);
+      font-size: 14pt;
+      line-height: 1.15;
+    }
+
+    .hours-card p {
+      color: var(--muted);
+      font-size: 8.7pt;
+      line-height: 1.3;
+    }
+
+    .hours-list {
+      display: grid;
+      gap: 1.9mm;
+    }
+
+    .hour-row {
+      display: grid;
+      grid-template-columns: 1fr 18mm;
+      gap: 3mm;
+      align-items: center;
+      padding: 2.3mm 2.8mm;
+      border-radius: 6px;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 8.7pt;
+      line-height: 1.18;
+      font-weight: 700;
+    }
+
+    .hour-row strong {
+      color: var(--orange);
+      font-size: 12pt;
+      line-height: 1;
+      text-align: right;
+    }
+
+    .impact-photo-large {
+      min-height: 0;
+    }
+
+    .hours-total {
+      margin-top: auto;
+      padding: 3mm 3.4mm;
+      border-left: 1mm solid var(--green);
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(49, 117, 74, 0.1), var(--soft));
+      color: var(--ink);
+      font-size: 9.5pt;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+
+    .impact-year-final {
+      padding: 3.4mm 5mm;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--blue), #145aa9);
+      color: white;
+      font-size: 12.4pt;
+      line-height: 1.18;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .valorisation-page .page-inner {
+      padding: 10mm 14mm 10mm;
+      grid-template-rows: 1fr auto;
+      gap: 3.6mm;
+    }
+
+    .valorisation-layout {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 3mm;
+      min-height: 0;
+    }
+
+    .valorisation-intro {
+      padding: 3.8mm 5mm;
+      border-left: 1.4mm solid var(--orange);
+      border-radius: 6px;
+      background: var(--soft);
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 5mm;
+      align-items: center;
+    }
+
+    .valorisation-intro h2 {
+      font-size: 24pt;
+      line-height: 1.02;
+    }
+
+    .valorisation-intro .lead {
+      font-size: 9.5pt;
+      line-height: 1.32;
+    }
+
+    .valorisation-photo-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3mm;
+      height: 38mm;
+      min-height: 0;
+    }
+
+    .valorisation-photo-strip figure {
+      min-height: 0;
+    }
+
+    .valorisation-photo-strip img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .valorisation-photo-strip figure:nth-child(1) img {
+      object-position: center center;
+    }
+
+    .valorisation-photo-strip figure:nth-child(2) img {
+      object-position: center 58%;
+    }
+
+    .valorisation-main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      min-height: 0;
+    }
+
+    .valorisation-photos {
+      display: grid;
+      grid-template-rows: 1fr 37mm;
+      gap: 3mm;
+      min-height: 0;
+    }
+
+    .valorisation-main-photo,
+    .valorisation-small-photos figure {
+      min-height: 0;
+    }
+
+    .valorisation-main-photo img,
+    .valorisation-small-photos img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .valorisation-main-photo img {
+      object-position: center center;
+    }
+
+    .valorisation-small-photos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5mm;
+      min-height: 0;
+    }
+
+    .valorisation-small-photos figure:nth-child(1) img {
+      object-position: center 60%;
+    }
+
+    .valorisation-small-photos figure:nth-child(2) img {
+      object-position: center center;
+    }
+
+    .valorisation-small-photos figure:nth-child(3) img {
+      object-position: center center;
+    }
+
+    .valorisation-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.4mm;
+      min-height: 0;
+      height: 100%;
+    }
+
+    .valor-card {
+      padding: 2.9mm 3.6mm;
+      border: 0.3mm solid var(--line);
+      border-radius: 6px;
+      background: white;
+      display: grid;
+      gap: 1mm;
+      align-content: start;
+    }
+
+    .valor-card.surplus {
+      border-left: 1mm solid var(--green);
+    }
+
+    .valor-card.transform {
+      border-left: 1mm solid var(--orange);
+    }
+
+    .valor-card.diffusion {
+      border-left: 1mm solid var(--blue);
+      background: linear-gradient(90deg, rgba(6, 63, 143, 0.06), white);
+    }
+
+    .valor-card h3 {
+      color: var(--blue);
+      font-size: 11.7pt;
+      line-height: 1.12;
+    }
+
+    .valor-card p {
+      color: var(--muted);
+      font-size: 8.1pt;
+      line-height: 1.24;
+    }
+
+    .valor-card p strong {
+      color: var(--ink);
+    }
+
+    .valor-figure {
+      display: inline-block;
+      margin-top: 0.4mm;
+      color: var(--blue);
+      font-size: 9.1pt;
+      line-height: 1.12;
+      font-weight: 800;
+    }
+
+    .valor-card.diffusion {
+      padding: 3.2mm 4mm;
+    }
+
+    .valor-card.diffusion p {
+      font-size: 8.6pt;
+      line-height: 1.26;
+    }
+
+    .valor-card.confiture-focus {
+      grid-template-columns: 50mm 1fr;
+      column-gap: 4mm;
+      align-items: center;
+      border-left-color: var(--orange);
+      background: linear-gradient(90deg, rgba(236, 108, 26, 0.06), white);
+    }
+
+    .valor-card.confiture-focus h3 {
+      grid-column: 1 / -1;
+    }
+
+    .valor-confiture-photo,
+    .valor-miel-photo {
+      width: 50mm;
+      height: 34mm;
+      min-height: 0;
+    }
+
+    .valor-confiture-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .valor-confiture-text {
+      display: grid;
+      gap: 0.9mm;
+    }
+
+    .valor-card.ruches-focus {
+      grid-template-columns: 50mm 1fr;
+      column-gap: 4mm;
+      align-items: center;
+      border-left-color: var(--blue);
+      background: linear-gradient(90deg, rgba(6, 63, 143, 0.06), white);
+    }
+
+    .valor-card.ruches-focus h3 {
+      grid-column: 1 / -1;
+    }
+
+    .valor-person-photo {
+      height: 30mm;
+      min-height: 0;
+    }
+
+    .valor-miel-photo img,
+    .valor-person-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .valor-miel-photo img {
+      object-fit: contain;
+      object-position: center center;
+      background: #f7f3ee;
+    }
+
+    .valor-person-photo img {
+      object-position: center 46%;
+    }
+
+    .valor-person-text {
+      display: grid;
+      gap: 0.8mm;
+    }
+
+    .valor-person-text .person-name {
+      color: var(--blue);
+      font-size: 9.2pt;
+      line-height: 1.12;
+      font-weight: 800;
+    }
+
+    .valor-person-text p {
+      font-size: 7.8pt;
+      line-height: 1.23;
+    }
+
+    .valorisation-final {
+      padding: 3.6mm 5mm;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--blue), #145aa9);
+      color: white;
+      font-size: 12.5pt;
+      line-height: 1.18;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .valorisation-page .page-inner {
+      padding: 9mm 14mm 8.5mm;
+      grid-template-rows: 1fr auto;
+      gap: 2.6mm;
+    }
+
+    .valorisation-layout {
+      grid-template-rows: auto auto auto auto auto;
+      gap: 3mm;
+      height: 100%;
+    }
+
+    .valorisation-intro {
+      min-height: 28mm;
+      padding: 3.8mm 5mm;
+      grid-template-columns: 0.84fr 1.16fr;
+      background: linear-gradient(90deg, rgba(245, 247, 250, 0.98), rgba(245, 247, 250, 0.72));
+    }
+
+    .valorisation-intro .kicker {
+      font-size: 13pt;
+      line-height: 1.15;
+    }
+
+    .valorisation-intro h2 {
+      font-size: 33pt;
+      line-height: 0.95;
+    }
+
+    .valorisation-intro .lead {
+      color: var(--ink);
+      font-size: 10.6pt;
+      line-height: 1.34;
+      font-weight: 700;
+    }
+
+    .valor-top-grid {
+      display: grid;
+      grid-template-columns: 0.88fr 0.74fr 0.33fr;
+      gap: 3mm;
+      height: 68mm;
+      min-height: 0;
+    }
+
+    .valor-left-stack {
+      display: grid;
+      gap: 3mm;
+      min-height: 0;
+    }
+
+    .impact-card {
+      padding: 4mm;
+      border: 0.3mm solid var(--line);
+      border-left: 1mm solid var(--green);
+      border-radius: 6px;
+      background: white;
+      display: grid;
+      grid-template-columns: 18mm 1fr;
+      gap: 4mm;
+      align-items: center;
+      min-height: 0;
+    }
+
+    .impact-icon {
+      width: 15mm;
+      height: 15mm;
+      border: 0.45mm solid var(--green);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      font-size: 12pt;
+      font-weight: 800;
+    }
+
+    .impact-icon svg {
+      width: 8.5mm;
+      height: 8.5mm;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .impact-card h3 {
+      color: var(--blue);
+      font-size: 12pt;
+      line-height: 1.12;
+    }
+
+    .impact-card p {
+      color: var(--ink);
+      font-size: 7.6pt;
+      line-height: 1.28;
+    }
+
+    .impact-card .valor-figure {
+      color: var(--green);
+      font-size: 8.5pt;
+      line-height: 1.1;
+    }
+
+    .valor-confiture-visual,
+    .bee-photo,
+    .honey-card figure {
+      min-height: 0;
+    }
+
+    .valor-confiture-visual img,
+    .bee-photo img,
+    .honey-card img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .valor-confiture-visual img {
+      object-position: center center;
+    }
+
+    .confiture-summary {
+      padding: 4mm;
+      border: 0.35mm solid rgba(236, 108, 26, 0.5);
+      border-radius: 6px;
+      background: white;
+      display: grid;
+      align-content: center;
+      gap: 3mm;
+      color: var(--ink);
+    }
+
+    .confiture-summary h3 {
+      color: var(--orange);
+      font-size: 13pt;
+      line-height: 1.05;
+    }
+
+    .confiture-summary p {
+      font-size: 8pt;
+      line-height: 1.3;
+    }
+
+    .confiture-summary strong {
+      display: block;
+      color: var(--orange);
+      font-size: 24pt;
+      line-height: 0.9;
+    }
+
+    .bee-section {
+      padding: 3.2mm;
+      border: 0.45mm solid var(--blue);
+      border-radius: 6px;
+      background: white;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 2.3mm;
+      min-height: 0;
+    }
+
+    .bee-section h3 {
+      color: var(--blue);
+      font-size: 16pt;
+      line-height: 1.05;
+    }
+
+    .bee-section h3 span {
+      display: block;
+      margin-top: 1.2mm;
+      color: var(--green);
+      font-size: 9.2pt;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .bee-grid {
+      display: grid;
+      grid-template-columns: 1.32fr 0.98fr;
+      gap: 3mm;
+      min-height: 100%;
+      height: 100%;
+      align-items: stretch;
+    }
+
+    .bee-photo {
+      height: 100%;
+    }
+
+    .bee-photo img {
+      object-position: center 42%;
+    }
+
+    .honey-card {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 0.25mm solid var(--line);
+      display: grid;
+      grid-template-rows: 49mm auto;
+      height: 100%;
+      min-height: 0;
+      align-self: stretch;
+    }
+
+    .honey-card figure {
+      height: 49mm;
+      border: 0;
+      border-radius: 0;
+      background: #f7f3ee;
+      overflow: hidden;
+    }
+
+    .honey-card img {
+      height: 49mm;
+      max-height: 49mm;
+      object-fit: cover;
+      object-position: center 44%;
+      background: #f7f3ee;
+    }
+
+    .honey-stat {
+      padding: 3mm;
+      background: var(--blue);
+      color: white;
+      display: grid;
+      gap: 1mm;
+    }
+
+    .honey-stat strong {
+      color: white;
+      font-size: 10pt;
+      line-height: 1.1;
+    }
+
+    .honey-stat span {
+      color: white;
+      font-size: 20pt;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .inspire-card {
+      padding: 3mm 4mm;
+      border: 0.3mm solid var(--line);
+      border-left: 1mm solid var(--blue);
+      border-radius: 6px;
+      background: white;
+      display: grid;
+      grid-template-columns: 20mm 1fr;
+      gap: 4mm;
+      align-items: center;
+    }
+
+    .inspire-icon {
+      width: 16mm;
+      height: 16mm;
+      border-radius: 50%;
+      background: var(--blue);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 12pt;
+      font-weight: 800;
+    }
+
+    .inspire-card h3 {
+      color: var(--blue);
+      font-size: 13pt;
+      line-height: 1.1;
+    }
+
+    .inspire-card p {
+      color: var(--ink);
+      font-size: 8pt;
+      line-height: 1.28;
+    }
+
+    .closing-layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 8mm;
+      align-items: stretch;
+    }
+
+    .closing-photo {
+      height: 166mm;
+    }
+
+    .quote-box {
+      padding: 6mm;
+      border-radius: 6px;
+      border: 0.35mm solid var(--line);
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 12pt;
+      line-height: 1.45;
+    }
+
+    .quote-box strong {
+      color: var(--blue);
+    }
+
+    .signature {
+      display: flex;
+      align-items: center;
+      gap: 5mm;
+      margin-top: 5mm;
+      color: var(--muted);
+      font-size: 9pt;
+      line-height: 1.32;
+    }
+
+    .signature img {
+      width: 24mm;
+      height: 24mm;
+      object-fit: contain;
+    }
+
+    .toc-page .page-inner {
+      padding: 10mm 14mm 10mm;
+      gap: 4mm;
+    }
+
+    .toc-layout {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 4mm;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .toc-hero {
+      padding-bottom: 2.6mm;
+      border-bottom: 0.45mm solid var(--line);
+      display: block;
+    }
+
+    .toc-hero .kicker {
+      font-size: 11pt;
+      line-height: 1.1;
+    }
+
+    .toc-hero h2 {
+      display: none;
+    }
+
+    .toc-hero .lead {
+      display: none;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .toc-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3.4mm;
+      align-content: stretch;
+    }
+
+    .toc-item {
+      display: grid;
+      grid-template-columns: 11mm 1fr 14mm;
+      gap: 4mm;
+      align-items: start;
+      min-height: 18mm;
+      padding: 3.8mm 4.4mm;
+      border: 0.35mm solid var(--line);
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 1.5mm 4mm rgba(15, 23, 42, 0.05);
+    }
+
+    .toc-item-index {
+      color: var(--blue);
+      font-size: 10.8pt;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .toc-item h3 {
+      color: var(--blue);
+      font-size: 11.4pt;
+      line-height: 1.08;
+      margin-bottom: 1mm;
+    }
+
+    .toc-item p {
+      color: var(--muted);
+      font-size: 8pt;
+      line-height: 1.28;
+    }
+
+    .toc-item-page {
+      color: var(--orange);
+      font-size: 8.4pt;
+      line-height: 1.1;
+      font-weight: 800;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .video-page .page-inner {
+      padding: 8mm 14mm 8mm;
+      grid-template-rows: 1fr auto;
+      gap: 3mm;
+    }
+
+    .video-layout {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 4mm;
+      height: 100%;
+      align-content: stretch;
+      min-height: 0;
+    }
+
+    .video-intro {
+      padding: 4.2mm 5.4mm;
+      border-left: 1.4mm solid var(--blue);
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(245, 247, 250, 0.98), rgba(245, 247, 250, 0.72));
+      display: grid;
+      grid-template-columns: 0.68fr 1.32fr;
+      gap: 4.4mm;
+      align-items: center;
+      min-height: 29mm;
+    }
+
+    .video-intro h2 {
+      font-size: 24pt;
+      line-height: 1.02;
+    }
+
+    .video-intro .lead {
+      font-size: 10.9pt;
+      line-height: 1.36;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-rows: 81mm minmax(0, 1fr);
+      gap: 4.4mm;
+      height: 100%;
+      align-content: stretch;
+      min-height: 0;
+    }
+
+    .video-card {
+      border: 0.3mm solid var(--line);
+      border-radius: 7px;
+      background: white;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .video-card figure {
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      background: #15181e;
+    }
+
+    .video-feature-card {
+      display: grid;
+      grid-template-columns: 1.16fr 0.84fr;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .video-feature-card figure {
+      height: 100%;
+    }
+
+    .video-thumb img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    .video-feature-side {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 0;
+      background: white;
+    }
+
+    .video-copy {
+      padding: 4.8mm 5mm 3.6mm;
+      display: grid;
+      gap: 2.4mm;
+      align-content: start;
+    }
+
+    .video-copy h3 {
+      color: var(--blue);
+      font-size: 16.1pt;
+      line-height: 1.05;
+    }
+
+    .video-copy p {
+      color: var(--muted);
+      font-size: 9.4pt;
+      line-height: 1.34;
+    }
+
+    .video-copy strong {
+      color: var(--ink);
+    }
+
+    .video-link-label {
+      color: var(--orange);
+      font-size: 7.4pt;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .video-qr-panel {
+      border-top: 0.3mm solid var(--line);
+      background: var(--soft);
+      padding: 4mm 4.4mm;
+      display: grid;
+      grid-template-columns: 24mm 1fr;
+      gap: 3.4mm;
+      align-items: center;
+    }
+
+    .video-qr-panel img {
+      width: 24mm;
+      height: 24mm;
+      display: block;
+      border-radius: 4px;
+      background: white;
+      border: 0.25mm solid var(--line);
+    }
+
+    .video-qr-panel p {
+      color: var(--muted);
+      font-size: 7.9pt;
+      line-height: 1.28;
+    }
+
+    .video-link {
+      display: inline-block;
+      margin-top: 1.2mm;
+      color: var(--blue);
+      font-size: 8.4pt;
+      line-height: 1.2;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .video-secondary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4mm;
+      height: 100%;
+      grid-auto-rows: 1fr;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    .video-secondary-card {
+      display: grid;
+      grid-template-rows: 50mm 1fr;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .video-secondary-card figure {
+      height: 50mm;
+    }
+
+    .video-secondary-body {
+      padding: 3.8mm 4.2mm;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 2.8mm;
+      height: 100%;
+      align-content: stretch;
+    }
+
+    .video-secondary-body h3 {
+      color: var(--blue);
+      font-size: 12.8pt;
+      line-height: 1.1;
+    }
+
+    .video-secondary-body p {
+      color: var(--muted);
+      font-size: 8.4pt;
+      line-height: 1.32;
+    }
+
+    .video-secondary-card .video-qr-panel {
+      padding: 3.6mm 0 0;
+      border-top: 0.3mm solid var(--line);
+      background: transparent;
+      grid-template-columns: 21mm 1fr;
+      align-self: end;
+    }
+
+    .video-secondary-card .video-qr-panel img {
+      width: 21mm;
+      height: 21mm;
+    }
+
+    .video-page .footer {
+      padding-top: 3mm;
+    }
+
+    .letter-page .page-inner {
+      padding: 6.5mm 14mm 10mm;
+      gap: 2.8mm;
+    }
+
+    .letter-layout {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 3mm;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .letter-masthead {
+      display: grid;
+      grid-template-columns: 24mm 1fr;
+      gap: 6mm;
+      align-items: center;
+      min-height: 31mm;
+    }
+
+    .letter-masthead .lions-logo {
+      width: 22mm;
+      height: 22mm;
+      object-fit: contain;
+    }
+
+    .letter-masthead-copy {
+      display: grid;
+      gap: 0.7mm;
+      color: var(--muted);
+      font-size: 8.8pt;
+      line-height: 1.14;
+    }
+
+    .letter-masthead-copy strong {
+      color: var(--blue);
+      font-size: 13.3pt;
+      line-height: 1.04;
+      letter-spacing: 0.02em;
+    }
+
+    .letter-masthead-copy .club-line {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .letter-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5mm;
+      align-items: start;
+    }
+
+    .letter-team-photo {
+      height: 47mm;
+      border-radius: 7px;
+      overflow: hidden;
+      border: 0.3mm solid var(--line);
+      background: var(--soft);
+    }
+
+    .letter-team-photo img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center 74%;
+    }
+
+    .letter-card {
+      padding: 4mm 4.5mm;
+      border: 0.3mm solid var(--line);
+      border-radius: 7px;
+      background: white;
+    }
+
+    .letter-sender {
+      border-left: 1.4mm solid var(--blue);
+      background: linear-gradient(90deg, rgba(245, 247, 250, 0.98), rgba(245, 247, 250, 0.74));
+    }
+
+    .letter-recipient {
+      border-left: 1.4mm solid var(--orange);
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .letter-sender strong,
+    .letter-recipient strong {
+      display: block;
+      margin-bottom: 1.2mm;
+      color: var(--blue);
+      font-size: 11pt;
+      line-height: 1.1;
+    }
+
+    .letter-recipient strong {
+      color: var(--orange);
+    }
+
+    .letter-sender p,
+    .letter-recipient p {
+      color: var(--muted);
+      font-size: 8.3pt;
+      line-height: 1.3;
+    }
+
+    .letter-subject {
+      padding: 4mm 4.8mm;
+      border-radius: 7px;
+      border-left: 1.5mm solid var(--green);
+      background: rgba(49, 117, 74, 0.08);
+      display: grid;
+      gap: 1.3mm;
+    }
+
+    .letter-subject small {
+      color: var(--green);
+      font-size: 7.5pt;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .letter-subject h2 {
+      color: var(--blue);
+      font-size: 17pt;
+      line-height: 1.06;
+    }
+
+    .letter-body {
+      display: grid;
+      gap: 2.4mm;
+      min-height: 0;
+    }
+
+    .letter-body p {
+      color: var(--ink);
+      font-size: 8.2pt;
+      line-height: 1.34;
+      text-align: justify;
+    }
+
+    .letter-highlight {
+      padding: 3.6mm 4mm;
+      border-radius: 7px;
+      border: 0.3mm solid rgba(6, 63, 143, 0.15);
+      background: var(--soft);
+      display: grid;
+      gap: 2.2mm;
+    }
+
+    .letter-highlight h3 {
+      color: var(--blue);
+      font-size: 11pt;
+      line-height: 1.08;
+    }
+
+    .letter-highlight ul {
+      margin: 0;
+      padding-left: 4.8mm;
+      display: grid;
+      gap: 1.3mm;
+    }
+
+    .letter-highlight li {
+      color: var(--ink);
+      font-size: 8pt;
+      line-height: 1.28;
+    }
+
+    .letter-signoff {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 5mm;
+      align-items: end;
+    }
+
+    .letter-closing {
+      color: var(--ink);
+      font-size: 8.2pt;
+      line-height: 1.34;
+    }
+
+    .letter-signature {
+      text-align: right;
+      display: grid;
+      gap: 1mm;
+      justify-items: end;
+    }
+
+    .letter-signature-mark {
+      color: var(--blue);
+      font-family: "Brush Script MT", "Segoe Script", cursive;
+      font-size: 16pt;
+      line-height: 1;
+      transform: rotate(-3deg);
+    }
+
+    .letter-signature strong {
+      color: var(--blue);
+      font-size: 9.4pt;
+      line-height: 1.1;
+    }
+
+    .letter-signature span {
+      color: var(--muted);
+      font-size: 7.8pt;
+      line-height: 1.25;
+    }
+
+    .photo-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4mm;
+      height: 42mm;
+    }
+
+    .photo-strip figure,
+    figure {
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+      border-radius: 6px;
+      border: 0.35mm solid var(--line);
+      background: var(--soft);
+    }
+
+    .photo-strip figcaption,
+    figure figcaption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 2.5mm 3mm;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--ink);
+      font-size: 7.8pt;
+      font-weight: 700;
+    }
+
+    @media screen {
+      body {
+        overflow-x: auto;
+      }
+
+      .document {
+        padding: 8mm 0;
+      }
+
+      .page {
+        margin: 0 auto 8mm;
+        box-shadow: 0 12px 40px rgba(13, 30, 53, 0.15);
+      }
+    }
+
+    @media print {
+      .document {
+        width: auto;
+      }
+
+      .page {
+        margin: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="document">
+    <section class="page">
+      <div class="page-inner">
+        <header class="header home-header">
+          <div class="brand">
+            <img class="lions-logo" src="images/logo_Lions.png" alt="Logo Lions International" />
+            <div class="brand-text home-brand-text">
+              <strong>LIONS CLUB INTERNATIONAL</strong>
+              <span>District Multiple 103 France</span>
+              <span>District 103 Normandie</span>
+              <span class="club-line">Lions Club Gisors les Templiers</span>
+            </div>
+          </div>
+          <img class="home-club-logo" src="images/logo-lions-club-gisors-transparent.png" alt="Logo Lions Club Gisors les Templiers" />
+        </header>
+
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="kicker">Concours Lions Cœur d'Or 2026</div>
+            <h1>Action<br>Citrouilles</h1>
+          </div>
+
+          <figure class="hero-photo">
+            <img src="images/recolte.jpg" alt="Bénévoles du Lions Club dans le champ avec les citrouilles" />
+            <figcaption class="caption-band">Depuis plus de 20 ans, une simple récolte est devenue un moteur de solidarité locale, où chaque citrouille vendue finance des causes essentielles et transforme des vies.</figcaption>
+          </figure>
+
+          <section class="causes-banner" aria-label="Causes soutenues par l'Action Citrouilles">
+            <h2 class="causes-title">Chaque citrouille a une destination : des causes concrètes, des vies impactées</h2>
+            <div class="causes-grid">
+              <article class="cause-card">
+                <span class="cause-visual cause-cancer" aria-hidden="true"></span>
+                <div>
+                  <h3>Cancers infantiles</h3>
+                  <p>Soutenir la lutte et la recherche pour guérir les enfants.</p>
+                </div>
+              </article>
+              <article class="cause-card">
+                <span class="cause-visual cause-autism" aria-hidden="true"></span>
+                <div>
+                  <h3>Enfants autistes</h3>
+                  <p>Favoriser l'accompagnement et l'inclusion.</p>
+                </div>
+              </article>
+              <article class="cause-card">
+                <span class="cause-visual cause-alzheimer" aria-hidden="true"></span>
+                <div>
+                  <h3>Alzheimer</h3>
+                  <p>Améliorer le quotidien et soutenir les aidants.</p>
+                </div>
+              </article>
+              <article class="cause-card">
+                <span class="cause-visual cause-guide" aria-hidden="true"></span>
+                <div>
+                  <h3>Chien guide</h3>
+                  <p>Contribuer à l'autonomie des personnes malvoyantes.</p>
+                </div>
+              </article>
+              <article class="cause-card">
+                <span class="cause-visual cause-hospital" aria-hidden="true"></span>
+                <div>
+                  <h3>Équipements hospitaliers</h3>
+                  <p>Financer du matériel et des équipements pour les soins.</p>
+                </div>
+              </article>
+              <article class="cause-card">
+                <span class="cause-visual cause-children" aria-hidden="true"></span>
+                <div>
+                  <h3>Enfants défavorisés</h3>
+                  <p>Aider, soutenir et offrir de meilleures chances.</p>
+                </div>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <footer class="footer">
+          <span>Action Citrouilles - Lions Club Gisors les Templiers</span>
+          <span class="page-number">1 / 8</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="page toc-page">
+      <div class="page-inner">
+        <div class="toc-layout">
+          <section class="toc-hero">
+            <div>
+              <p class="kicker">Table des matières</p>
+            </div>
+          </section>
+
+          <div class="toc-grid">
+            <div class="toc-list">
+              <article class="toc-item">
+                <span class="toc-item-index">01</span>
+                <div>
+                  <h3>Couverture</h3>
+                  <p>La vision d'ensemble de l'Action Citrouilles, ses causes soutenues et son identité Lions.</p>
+                </div>
+                <span class="toc-item-page">p. 1</span>
+              </article>
+
+              <article class="toc-item">
+                <span class="toc-item-index">02</span>
+                <div>
+                  <h3>Sommaire</h3>
+                  <p>La lecture du dossier, structurée pour aller de l'origine du projet jusqu'à sa candidature finale.</p>
+                </div>
+                <span class="toc-item-page">p. 2</span>
+              </article>
+
+              <article class="toc-item">
+                <span class="toc-item-index">03</span>
+                <div>
+                  <h3>Historique</h3>
+                  <p>La naissance de l'action, son ancrage local et sa construction dans la durée.</p>
+                </div>
+                <span class="toc-item-page">p. 3</span>
+              </article>
+
+              <article class="toc-item">
+                <span class="toc-item-index">04</span>
+                <div>
+                  <h3>Méthode</h3>
+                  <p>La chaîne de solidarité, de la graine à la redistribution concrète.</p>
+                </div>
+                <span class="toc-item-page">p. 4</span>
+              </article>
+
+              <article class="toc-item">
+                <span class="toc-item-index">05</span>
+                <div>
+                  <h3>Impact annuel</h3>
+                  <p>Les résultats mesurés, les heures bénévoles et les effets directs sur le territoire.</p>
+                </div>
+                <span class="toc-item-page">p. 5</span>
+              </article>
+
+              <article class="toc-item">
+                <span class="toc-item-index">06</span>
+                <div>
+                  <h3>Valorisation solidaire</h3>
+                  <p>Zéro gaspillage, transformation utile, miel solidaire et prolongement des actions locales.</p>
+                </div>
+                <span class="toc-item-page">p. 6</span>
+              </article>
+
+              <article class="toc-item">
+                <span class="toc-item-index">07</span>
+                <div>
+                  <h3>Vidéos &amp; reportages</h3>
+                  <p>Les preuves en images, les QR codes et les témoignages associés au dossier.</p>
+                </div>
+                <span class="toc-item-page">p. 7</span>
+              </article>
+
+              <article class="toc-item">
+                <span class="toc-item-index">08</span>
+                <div>
+                  <h3>Lettre de motivation</h3>
+                  <p>La synthèse institutionnelle qui porte officiellement la candidature du club.</p>
+                </div>
+                <span class="toc-item-page">p. 8</span>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <span>Sommaire - Lecture du dossier de candidature</span>
+          <span class="page-number">2 / 8</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="page history-page">
+      <div class="page-inner">
+        <div class="history-layout">
+          <div class="history-stack">
+            <div>
+              <div class="history-kicker">Une idée simple devenue une action emblématique</div>
+              <h2 class="history-title">Une action née du terrain, construite dans la durée</h2>
+            </div>
+            <p class="history-subtitle">Depuis plus de 20 ans, l'Action Citrouilles transforme une culture agricole en soutien concret pour les personnes malades ou en difficulté.</p>
+            <p class="history-lead">Initiée il y a 22 ans par <strong>Luc Baticle</strong>, doyen du <strong>Lions Club Gisors les Templiers</strong>, cette action est née d'une conviction simple : transformer une culture locale en geste utile, visible et fédérateur pour le territoire.</p>
+
+            <article class="history-card">
+              <h3>Des débuts simples, sans moyens mais avec du sens</h3>
+              <p>Les premières plantations s'organisent autour du <strong>Lions Club Gisors les Templiers</strong> : semis manuels, terrain local, entraide bénévole et volonté d'agir concrètement.</p>
+              <p><strong>Aucun investissement financier initial :</strong> le projet repose sur l'engagement humain du club, la disponibilité du terrain, l'énergie des membres et une organisation simple, fidèle à l'esprit Lions.</p>
+              <p>Cette sobriété donne immédiatement du sens à l'action : chaque citrouille cultivée devient une ressource solidaire, ancrée dans la réalité du territoire.</p>
+            </article>
+
+            <article class="history-card">
+              <h3>Une action qui se structure année après année</h3>
+              <ul>
+                <li>Intégration dans un cycle agricole local, notamment après les tulipes.</li>
+                <li>Récolte régulière et mobilisation élargie aux membres du club, aux proches et aux bénévoles.</li>
+                <li>Implication progressive des partenaires locaux, des commerces et des relais associatifs.</li>
+                <li>Transmission d'un savoir-faire simple, reproductible et compris par tous.</li>
+              </ul>
+            </article>
+
+            <p class="history-conclusion"><strong>D'une graine plantée il y a 22 ans</strong> est née une action collective durable, aujourd'hui portée par le <strong>Lions Club Gisors les Templiers</strong>, reconnue localement et mise au service de multiples causes.</p>
+          </div>
+
+          <div class="history-side">
+            <figure class="history-photo">
+              <img src="images/Citrouilles - 5.jpg" alt="Récolte de citrouilles avec les bénévoles" />
+              <figcaption>Le terrain d'abord : une action ancrée dans le réel.</figcaption>
+            </figure>
+
+            <div class="history-stat">
+              <strong>300</strong>
+              <span>citrouilles récoltées chaque année, signe de la régularité et de la solidité du projet.</span>
+            </div>
+
+            <article class="history-card">
+              <h3>Une dynamique territoriale forte</h3>
+              <p>L'action dépasse rapidement le cadre du club grâce aux commerces de Gisors et des environs, aux partenaires locaux, aux acteurs associatifs et au monde de la santé.</p>
+              <p><strong>Un circuit court solidaire</strong> se met en place et renforce l'ancrage local de l'action.</p>
+            </article>
+
+            <article class="history-card">
+              <h3>Aujourd'hui : un modèle durable et reproductible</h3>
+              <div class="history-cycle">
+                <span class="cycle-item">Production agricole locale</span>
+                <span class="cycle-item">Mobilisation humaine</span>
+                <span class="cycle-item">Vente en circuit court</span>
+                <span class="cycle-item">Redistribution solidaire</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="history-wide history-gallery-strip" aria-label="Galerie historique de l'Action Citrouilles">
+            <figure>
+              <img src="images/20151024_101139.jpg" alt="Voiture chargée de citrouilles" />
+              <figcaption>Récolte historique</figcaption>
+            </figure>
+            <figure>
+              <img src="images/IMG_8151.JPG" alt="Bénévoles chargeant des citrouilles dans une remorque" />
+              <figcaption>Mobilisation sur le terrain</figcaption>
+            </figure>
+            <figure>
+              <img src="images/Citrouilles - 6.jpg" alt="Nettoyage et préparation des citrouilles" />
+              <figcaption>Préparation solidaire</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <span>Historique &amp; évolution - Action Citrouilles</span>
+          <span class="page-number">3 / 8</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="page method-page">
+      <div class="page-inner">
+        <div class="loop-layout">
+          <div class="loop-intro">
+            <div>
+              <div class="kicker">Nous cultivons plus qu'une récolte</div>
+              <h2>Nous cultivons une chaîne de solidarité.</h2>
+            </div>
+            <div>
+              <p class="lead">Chaque étape produit de l'utilité : un geste simple devient financement, lien social, sensibilisation et transmission.</p>
+              <p class="method-note">La force de l'Action Citrouilles tient dans cette boucle claire : produire localement, mobiliser les bénévoles, vendre en circuit court, puis redistribuer au profit de causes concrètes.</p>
+            </div>
+          </div>
+
+          <div class="step-grid">
+            <article class="step">
+              <div class="step-photo">
+                <img src="images/ai-step-1-graine.png" alt="Graine de citrouille plantée dans la terre" />
+              </div>
+              <span class="step-number">1</span>
+              <h3>La graine</h3>
+              <p>Tout commence simplement : une graine, un terrain disponible et une culture accessible, portée par la volonté d'agir.</p>
+              <p class="step-takeaway">Une idée à la portée de tous.</p>
+              <p class="step-detail"><strong>Ce que cela déclenche</strong>Un point de départ lisible par tous, facile à expliquer et capable de fédérer autour d'une première action concrète.</p>
+            </article>
+            <article class="step">
+              <div class="step-photo">
+                <img src="images/ai-step-2-recolte.png" alt="Bénévoles récoltant des citrouilles dans un champ" />
+              </div>
+              <span class="step-number">2</span>
+              <h3>La récolte</h3>
+              <p>Le club se mobilise sur le terrain. Bénévoles et membres agissent ensemble, dans un temps fort concret et visible.</p>
+              <p class="step-takeaway">Un moment de cohésion et d'engagement collectif.</p>
+              <p class="step-detail"><strong>Ce que cela crée</strong>Une journée de terrain, des rôles simples, une énergie commune et la fierté de voir la récolte devenir utile.</p>
+            </article>
+            <article class="step">
+              <div class="step-photo">
+                <img src="images/ai-step-3-territoire.png" alt="Partenaires locaux autour de citrouilles" />
+              </div>
+              <span class="step-number">3</span>
+              <h3>Le territoire</h3>
+              <p>Les partenaires locaux prennent le relais. Commerces, habitants et acteurs de proximité amplifient l'action dans la ville.</p>
+              <p class="step-takeaway">Une dynamique qui dépasse le club.</p>
+              <p class="step-detail"><strong>Ce que cela active</strong>Un réseau local de confiance : commerces, familles et partenaires donnent de l'écho à l'action et renforcent son ancrage.</p>
+            </article>
+            <article class="step">
+              <div class="step-photo">
+                <img src="images/ai-step-4-financement.png" alt="Dons et citrouilles sur un stand solidaire" />
+              </div>
+              <span class="step-number">4</span>
+              <h3>Le financement</h3>
+              <p>Les ventes deviennent un levier concret, immédiatement compréhensible par tous et directement relié aux besoins soutenus.</p>
+              <p class="step-takeaway">Chaque citrouille vendue soutient directement une cause.</p>
+              <p class="step-detail"><strong>Ce que cela permet</strong>Des fonds orientés vers des projets solidaires identifiés, utiles et visibles pour les bénéficiaires comme pour les donateurs.</p>
+            </article>
+            <article class="step">
+              <div class="step-photo">
+                <img src="images/ai-step-5-valorisation.png" alt="Transformation durable de citrouilles et miel" />
+              </div>
+              <span class="step-number">5</span>
+              <h3>La valorisation durable</h3>
+              <p>Rien ne se perd : chaque surplus devient une ressource, transformée en confitures et soupes solidaires au bénéfice des personnes sans-abri.</p>
+              <p class="step-takeaway">Une approche responsable et durable.</p>
+              <p class="step-detail"><strong>Ce que cela prolonge</strong>Moins de gaspillage, plus de pédagogie, et un lien naturel entre agriculture locale, alimentation, environnement et solidarité.</p>
+            </article>
+            <article class="step">
+              <div class="step-photo">
+                <img src="images/ai-step-6-transmission.png" alt="Transmission intergénérationnelle autour de plantations" />
+              </div>
+              <span class="step-number">6</span>
+              <h3>La transmission</h3>
+              <p>Le projet inspire et perdure. Il crée du lien, transmet des valeurs Lions et se renouvelle avec les générations.</p>
+              <p class="step-takeaway">Une action qui continue de grandir.</p>
+              <p class="step-detail"><strong>Ce que cela transmet</strong>L'envie de participer, la culture du service et une méthode simple que le club peut faire vivre année après année.</p>
+            </article>
+          </div>
+
+          <div class="method-closing">Une boucle simple, devenue un modèle de solidarité durable.</div>
+        </div>
+
+        <footer class="footer">
+          <span>Une action lisible, reproductible et utile</span>
+          <span class="page-number">4 / 8</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="page impact-year-page">
+      <div class="page-inner">
+        <header class="header">
+          <div class="brand">
+            <img class="lions-logo" src="images/logo_Lions.png" alt="Logo Lions International" />
+            <div class="brand-text">
+              <strong>Impact annuel</strong>
+              Des résultats utiles, lisibles et réguliers
+            </div>
+          </div>
+          <div class="page-label">Impact</div>
+        </header>
+
+        <div class="impact-year-layout">
+          <div class="impact-year-hero">
+            <div class="impact-year-intro">
+              <div>
+                <p class="kicker">Concours Lions Cœur d'Or 2026</p>
+                <h2>Un impact concret, mesuré chaque année</h2>
+              </div>
+              <div>
+                <p class="lead">Des résultats simples, réguliers et directement utiles au territoire.</p>
+                <p class="lead">Un engagement constant, reconduit chaque année depuis plus de deux décennies par le Lions Club Gisors les Templiers.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="impact-year-metrics">
+            <div class="year-metric">
+              <strong>22 ans</strong>
+              <span>d'engagement continu chaque année</span>
+            </div>
+            <div class="year-metric">
+              <strong>245 h</strong>
+              <span>de mobilisation bénévole par an</span>
+            </div>
+            <div class="year-metric">
+              <strong>2 tonnes</strong>
+              <span>de citrouilles récoltées chaque année</span>
+            </div>
+            <div class="year-metric">
+              <strong>5 300 €</strong>
+              <span>reversés chaque année à des causes solidaires</span>
+            </div>
+          </div>
+
+          <div class="impact-year-body">
+            <figure class="impact-year-photo impact-photo-large">
+              <img src="images/page4-impact-photo.png" alt="Bénévoles mobilisés autour de la récolte de citrouilles" />
+              <figcaption>Une mobilisation de terrain : récolter, trier et préparer ensemble pour soutenir des causes locales.</figcaption>
+            </figure>
+
+            <section class="hours-card">
+              <h3>Une mobilisation structurée et collective</h3>
+              <p>La force du projet repose sur un calendrier clair : produire, récolter, transporter, vendre, transformer, puis redistribuer.</p>
+              <div class="hours-list">
+                <div class="hour-row"><span>Semis d'environ 300 plants</span><strong>50 h</strong></div>
+                <div class="hour-row"><span>Plantation, préparation et récolte</span><strong>90 h</strong></div>
+                <div class="hour-row"><span>Vente locale, relais et logistique</span><strong>70 h</strong></div>
+                <div class="hour-row"><span>Transformation de 350 pots</span><strong>35 h</strong></div>
+              </div>
+              <div class="hours-total">Soit plus de 245 heures de mobilisation bénévole chaque année, au service d'une action locale visible et durable.</div>
+            </section>
+          </div>
+
+          <div class="impact-year-final">Une action simple, reconduite chaque année, qui produit un impact réel et durable.</div>
+        </div>
+
+        <footer class="footer">
+          <span>Impact annuel - Lions Club Gisors les Templiers</span>
+          <span class="page-number">5 / 8</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="page valorisation-page">
+      <div class="page-inner">
+        <div class="valorisation-layout">
+          <section class="valorisation-intro">
+            <div>
+              <p class="kicker">Zéro gaspillage, 100% solidaire</p>
+            </div>
+            <p class="lead">Au-delà de la récolte, l'Action Citrouilles s'inscrit dans une logique de valorisation complète : en cas de surproduction, chaque citrouille non vendue est transformée en impact solidaire concret.</p>
+          </section>
+
+          <div class="valor-top-grid">
+            <div class="valor-left-stack">
+              <article class="impact-card">
+                <div class="impact-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </div>
+                <div>
+                  <h3>Distribution directe</h3>
+                  <p><strong>Saint Vincent de Paul :</strong> les invendus et surplus sont distribués aux personnes les plus démunies, dans une logique de proximité et d'économie circulaire.</p>
+                  <p class="valor-figure">≈ 30 citrouilles</p>
+                </div>
+              </article>
+
+              <article class="impact-card">
+                <div class="impact-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M5 12h14" />
+                    <path d="M7 12v2a5 5 0 0 0 10 0v-2" />
+                    <path d="M8 6c0 1 .75 1.4.75 2.2S8 9.4 8 10" />
+                    <path d="M12 6c0 1 .75 1.4.75 2.2S12 9.4 12 10" />
+                    <path d="M16 6c0 1 .75 1.4.75 2.2S16 9.4 16 10" />
+                  </svg>
+                </div>
+                <div>
+                  <h3>Aide alimentaire</h3>
+                  <p><strong>Secours populaire :</strong> une partie de la production est transformée en soupes pour les personnes sans-abri, afin que rien ne se perde.</p>
+                  <p class="valor-figure">≈ 20 citrouilles (15 kg)</p>
+                </div>
+              </article>
+            </div>
+
+            <figure class="valor-confiture-visual">
+              <img src="images/Citrouilles - 1.jpg" alt="Pots de confiture réalisés avec les citrouilles" />
+            </figure>
+
+            <article class="confiture-summary">
+              <h3>Confitures solidaires</h3>
+              <p><strong>Fabrication artisanale :</strong> les membres du club prolongent l'impact de la récolte en réalisant des confitures vendues au profit du Téléthon.</p>
+              <p>En moyenne <strong>350</strong> pots réalisés chaque année</p>
+            </article>
+          </div>
+
+          <section class="bee-section">
+            <h3>Miel &amp; ruches pédagogiques à l'Hôpital de Gisors
+              <span>Financés par notre dernière opération Citrouille</span>
+            </h3>
+            <div class="bee-grid">
+              <figure class="bee-photo">
+                <img src="images/sylviane.jpg" alt="Ruches pédagogiques du Lions Club" />
+              </figure>
+
+              <div class="honey-card">
+                <figure>
+                  <img src="images/miel.jpg .jpg" alt="Pot de miel local" />
+                </figure>
+                <div class="honey-stat">
+                  <strong>Production locale solidaire</strong>
+                  <p>Les revenus du miel sont reversés aux soins palliatifs de l'Hôpital de Gisors.</p>
+                  <span>120</span>
+                  <strong>pots de miel (250 g)</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <article class="inspire-card">
+            <div class="inspire-icon">↗</div>
+            <div>
+              <h3>Une action qui inspire</h3>
+              <p>Grâce au Lions Club Gisors les Templiers, l'initiative s'est étendue à d'autres territoires, avec un déploiement dans un autre club de Normandie, à Cabourg.</p>
+              <p><strong>Modèle reproductible :</strong> cette diffusion prouve la pertinence d'un modèle local, simple à comprendre et capable de créer un impact durable au-delà de Gisors.</p>
+            </div>
+          </article>
+
+          <div class="valorisation-final">Une production locale entièrement valorisée, transformée en aides concrètes au service des plus fragiles.</div>
+        </div>
+
+        <footer class="footer">
+          <span>Valoriser les surplus, transformer, redistribuer</span>
+          <span class="page-number">6 / 8</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="page video-page">
+      <div class="page-inner">
+        <div class="video-layout">
+          <section class="video-intro">
+            <div>
+              <p class="kicker">À voir en vidéo</p>
+            </div>
+            <p class="lead">Scannez les QR codes ou cliquez sur les liens pour découvrir le reportage rétrospectif, l'action à l'EHPAD et l'engagement du Lions Club pour la biodiversité à l'Hôpital de Gisors.</p>
+          </section>
+
+          <div class="video-grid">
+            <article class="video-card video-feature-card">
+              <figure class="video-thumb">
+                <img src="images/video-reportage-citrouilles.png" alt="Vidéo rétrospective de l'Action Citrouilles" />
+              </figure>
+              <div class="video-feature-side">
+                <div class="video-copy">
+                  <span class="video-link-label">Reportage principal</span>
+                  <h3>Vidéo rétrospective</h3>
+                  <p>Collecte, préparation et mobilisation des bénévoles autour de l'Action Citrouilles.</p>
+                  <p><strong>Contenu :</strong> retour en images sur l'organisation, l'énergie collective et la dynamique locale qui portent l'action.</p>
+                </div>
+                <div class="video-qr-panel">
+                  <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&amp;data=https%3A%2F%2Ffb.watch%2FGFWZo-8AuF%2F" alt="QR code vers la vidéo rétrospective" />
+                  <p>
+                    Scannez pour ouvrir la vidéo Facebook.
+                    <a class="video-link" href="https://fb.watch/GFWZo-8AuF/" target="_blank" rel="noopener noreferrer">Voir le reportage</a>
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <div class="video-secondary-grid">
+              <article class="video-card video-secondary-card">
+                <figure class="video-thumb">
+                  <img src="images/video-ehpad-borne-melo.png" alt="Vidéo sur la borne Mélo à l'EHPAD" />
+                </figure>
+                <div class="video-secondary-body">
+                  <h3>La borne Mélo à l'EHPAD</h3>
+                  <p>Une action financée dans le cadre de l'opération Citrouilles, en faveur des patients atteints d'Alzheimer à l'Hôpital de Gisors.</p>
+                  <div class="video-qr-panel">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&amp;data=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D937217750149659%26ref%3Dsharing" alt="QR code vers la vidéo de la borne Mélo" />
+                    <p>
+                      Scannez ou cliquez.
+                      <a class="video-link" href="https://www.facebook.com/watch/?v=937217750149659&amp;ref=sharing" target="_blank" rel="noopener noreferrer">Voir la vidéo</a>
+                    </p>
+                  </div>
+                </div>
+              </article>
+
+              <article class="video-card video-secondary-card">
+                <figure class="video-thumb">
+                  <img src="images/video-biodiversite-hopital.png" alt="Vidéo sur la biodiversité à l'Hôpital de Gisors" />
+                </figure>
+                <div class="video-secondary-body">
+                  <h3>Biodiversité à l'hôpital</h3>
+                  <p>Le témoignage de terrain qui relie directement notre engagement écologique au Centre Hospitalier de Gisors.</p>
+                  <div class="video-qr-panel">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&amp;data=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D502655396116974%26ref%3Dsharing" alt="QR code vers la vidéo sur la biodiversité à l'hôpital" />
+                    <p>
+                      Scannez ou cliquez.
+                      <a class="video-link" href="https://www.facebook.com/watch/?v=502655396116974&amp;ref=sharing" target="_blank" rel="noopener noreferrer">Voir la vidéo</a>
+                    </p>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <span>Vidéos complémentaires et QR codes d'accès</span>
+          <span class="page-number">7 / 8</span>
+        </footer>
+      </div>
+    </section>
+
+    <section class="page letter-page">
+      <div class="page-inner">
+          <div class="letter-layout">
+          <div class="letter-masthead">
+            <img class="lions-logo" src="images/logo_Lions.png" alt="Logo Lions International" />
+            <div class="letter-masthead-copy">
+              <strong>LIONS CLUB INTERNATIONAL</strong>
+              <span>District Multiple 103 France</span>
+              <span>District 103 Normandie</span>
+              <span class="club-line">Lions Club Gisors les Templiers</span>
+            </div>
+          </div>
+
+          <figure class="letter-team-photo">
+            <img src="images/anniversaireclub.jpg" alt="Équipe du Lions Club Gisors les Templiers" />
+          </figure>
+
+          <section class="letter-subject">
+            <small>Objet</small>
+            <h2>Candidature au Prix National Lions Coeur d'Or 2025/2026, Action Citrouilles</h2>
+          </section>
+
+          <div class="letter-body">
+            <p>Madame, Monsieur,</p>
+            <p>Le Lions Club Gisors les Templiers a l'honneur de vous présenter sa candidature au Prix National Lions Coeur d'Or, à travers son Action Citrouilles, une initiative profondément ancrée dans l'esprit de don de soi particulièrement généreux qui guide notre mouvement.</p>
+            <p>Depuis plus de vingt ans, cette action locale mobilise durablement les membres du club, ainsi que de nombreux acteurs du territoire, autour d'un objectif simple : transformer une production agricole en soutien concret aux personnes en difficulté.</p>
+
+            <section class="letter-highlight">
+              <h3>Pourquoi cette action répond pleinement à l'esprit du concours</h3>
+              <ul>
+                <li>Une action originale et accessible, reposant sur un modèle simple, lisible et reproductible.</li>
+                <li>Une forte portée morale et humaine, avec un impact direct sur des bénéficiaires variés : malades, enfants et personnes vulnérables.</li>
+                <li>Une pérennité éprouvée, avec plus de 20 années d'engagement continu.</li>
+                <li>Une mobilisation collective significative, représentant chaque année plusieurs centaines d'heures de bénévolat.</li>
+              </ul>
+            </section>
+
+            <p>Au-delà de son efficacité, cette action incarne une dimension essentielle : celle du lien humain. Chaque étape, de la plantation à la redistribution, est portée par l'engagement des Lions, mais aussi par celui des bénévoles, partenaires et habitants, créant ainsi une dynamique locale forte et durable.</p>
+            <p>Fidèle à l'esprit du concours, l'Action Citrouilles ne se limite pas à un apport financier. Elle génère une véritable valeur morale et affective, en rendant visible l'entraide, en fédérant autour d'un projet commun et en apportant un soutien concret à ceux qui en ont besoin.</p>
+            <p>Elle s'inscrit également dans une démarche responsable, où rien ne se perd : les surplus sont redistribués ou transformés en aides alimentaires, prolongeant ainsi l'impact solidaire au bénéfice des plus fragiles.</p>
+            <p>À travers cette candidature, notre club souhaite mettre en lumière une conviction forte : la générosité la plus impactante est souvent celle qui s'inscrit dans la durée, mobilise le collectif et agit concrètement au coeur des territoires.</p>
+          </div>
+
+          <div class="letter-signoff">
+            <p class="letter-closing">Nous vous remercions pour l'attention portée à notre dossier et restons à votre disposition pour tout complément d'information.<br><br>Nous vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations respectueuses.</p>
+
+            <div class="letter-signature">
+              <div class="letter-signature-mark">J.-J. Cavalon</div>
+              <strong>Jean-Jacques CAVALON</strong>
+              <span>Président 2025 - 2026 du Lions Club Gisors les Templiers</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <span>Lettre de motivation - Candidature Lions Coeur d'Or</span>
+          <span class="page-number">8 / 8</span>
+        </footer>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
