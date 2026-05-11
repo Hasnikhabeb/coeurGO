@@ -93,9 +93,6 @@ const assistantModeBadge = document.getElementById("assistantModeBadge");
 const assistantPrimaryTitle = document.getElementById("assistantPrimaryTitle");
 const assistantPrimaryBody = document.getElementById("assistantPrimaryBody");
 const assistantLog = document.getElementById("assistantLog");
-const assistantNextBtn = document.getElementById("assistantNextBtn");
-const assistantExplainBtn = document.getElementById("assistantExplainBtn");
-const assistantBlockedBtn = document.getElementById("assistantBlockedBtn");
 const screenFlash = document.getElementById("screenFlash");
 const clockTime = document.getElementById("clockTime");
 const clockDate = document.getElementById("clockDate");
@@ -105,13 +102,8 @@ const levelReward = document.getElementById("levelReward");
 const findBtn = document.getElementById("findBtn");
 const checkBtn = document.getElementById("checkBtn");
 const addDaeBtn = document.getElementById("addDaeBtn");
-const topAddDaeBtn = document.getElementById("topAddDaeBtn");
-const topRemoveDaeBtn = document.getElementById("topRemoveDaeBtn");
 const photoBtn = document.getElementById("photoBtn");
 const gpsBtn = document.getElementById("gpsBtn");
-const viewRegionBtn = document.getElementById("viewRegionBtn");
-const desktopViewBtn = document.getElementById("desktopViewBtn");
-const mobileViewBtn = document.getElementById("mobileViewBtn");
 const topbar = document.querySelector(".topbar");
 const panel = document.querySelector(".panel");
 const checklistOverlay = document.getElementById("checklistOverlay");
@@ -123,7 +115,6 @@ const trophyCatalogOverlay = document.getElementById("trophyCatalogOverlay");
 const trophyCatalogGrid = document.getElementById("trophyCatalogGrid");
 const trophyCatalogSummary = document.getElementById("trophyCatalogSummary");
 const closeTrophyCatalogBtn = document.getElementById("closeTrophyCatalogBtn");
-const openTrophyCatalogBtn = document.getElementById("openTrophyCatalogBtn");
 const photoInput = document.getElementById("photoInput");
 const ASSISTANT_MAX_LOG = 6;
 const ASSISTANT_IDLE_DELAY_MS = 18000;
@@ -1874,8 +1865,6 @@ function setHeaderMode(mode) {
   const nextMode = normaliseViewMode(mode);
   const isMobileMode = nextMode === "mobile";
   document.body.classList.toggle("mobile-mode", isMobileMode);
-  desktopViewBtn.classList.toggle("is-selected", !isMobileMode);
-  mobileViewBtn.classList.toggle("is-selected", isMobileMode);
   safeSetStorage(VIEW_STORAGE_KEY, nextMode);
   updateLayoutMetrics();
 }
@@ -1983,12 +1972,6 @@ function updateActionButtons() {
   findBtn.disabled = !canFind;
   checkBtn.disabled = !canCheck;
   addDaeBtn.disabled = !canAddDae;
-  if (topAddDaeBtn) {
-    topAddDaeBtn.disabled = !canAddDae;
-  }
-  if (topRemoveDaeBtn) {
-    topRemoveDaeBtn.disabled = !canRemoveCustomDae;
-  }
   photoBtn.disabled = !canPhoto;
   findBtn.className = `action-btn${canFind ? " is-active" : ""}${missionStep >= 1 && !allDone ? " is-done" : ""}`;
   checkBtn.className = `action-btn${canCheck ? " is-active" : ""}${missionStep >= 2 && !allDone ? " is-done" : ""}`;
@@ -2057,6 +2040,9 @@ function updateScore({ animateTrophy = false } = {}) {
 }
 
 function updateGpsButton() {
+  if (!gpsBtn) {
+    return;
+  }
   gpsBtn.textContent = playerPos ? "GPS actif" : "Me localiser";
 }
 
@@ -2414,27 +2400,18 @@ function registerInteractionEvents() {
     checklistItems,
     refs: {
       addDaeBtn,
-      assistantBlockedBtn,
-      assistantExplainBtn,
-      assistantNextBtn,
       checkBtn,
       checklistOverlay,
       closeChecklistBtn,
       closeTrophyCatalogBtn,
-      desktopViewBtn,
       findBtn,
       gpsBtn,
       levelReward,
-      mobileViewBtn,
-      openTrophyCatalogBtn,
       photoBtn,
       photoInput,
       playerTrophyBadge,
-      topAddDaeBtn,
-      topRemoveDaeBtn,
       trophyCatalogOverlay,
-      validateChecklistBtn,
-      viewRegionBtn
+      validateChecklistBtn
     },
     actions: {
       askAssistant,
@@ -2465,7 +2442,7 @@ function registerInteractionEvents() {
 
 loadCatalog();
 loadGameState();
-setHeaderMode(window.innerWidth < 900 ? "mobile" : normaliseViewMode(safeGetStorage(VIEW_STORAGE_KEY)));
+setHeaderMode(window.innerWidth < 900 ? "mobile" : "desktop");
 fitToVernon();
 queueVisibleMarkersRefresh();
 prepareDaeAiTrainingSet();

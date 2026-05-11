@@ -29,25 +29,6 @@
     cleanups.push(() => hostWindow.clearInterval(intervalId));
   }
 
-  function createAssistantHandler(actions, intent, label) {
-    return function handleAssistantRequest() {
-      actions.askAssistant(intent, label);
-    };
-  }
-
-  function createSetModeHandler(actions, mode) {
-    return function handleSetMode() {
-      actions.setHeaderMode(mode);
-    };
-  }
-
-  function createViewRegionHandler(actions) {
-    return function handleViewRegion() {
-      actions.fitToVernon();
-      actions.showStatus("Vue Vernon recentree.", "info");
-    };
-  }
-
   function createChecklistChangeHandler(context, index) {
     return function handleChecklistChange(event) {
       const input = event.currentTarget;
@@ -108,17 +89,8 @@
     addDomListener(cleanups, refs.findBtn, "click", actions.findAED);
     addDomListener(cleanups, refs.checkBtn, "click", actions.checkAED);
     addDomListener(cleanups, refs.addDaeBtn, "click", actions.handleAddDaeAction);
-    addDomListener(cleanups, refs.topAddDaeBtn, "click", actions.handleAddDaeAction);
-    addDomListener(cleanups, refs.topRemoveDaeBtn, "click", actions.handleRemoveDaeAction);
     addDomListener(cleanups, refs.photoBtn, "click", actions.photoAED);
     addDomListener(cleanups, refs.gpsBtn, "click", actions.locatePlayer);
-    addDomListener(cleanups, refs.viewRegionBtn, "click", createViewRegionHandler(actions));
-    addDomListener(cleanups, refs.desktopViewBtn, "click", createSetModeHandler(actions, "desktop"));
-    addDomListener(cleanups, refs.mobileViewBtn, "click", createSetModeHandler(actions, "mobile"));
-    addDomListener(cleanups, refs.assistantNextBtn, "click", createAssistantHandler(actions, "next", "Etape suivante"));
-    addDomListener(cleanups, refs.assistantExplainBtn, "click", createAssistantHandler(actions, "explain", "Explique-moi cette action"));
-    addDomListener(cleanups, refs.assistantBlockedBtn, "click", createAssistantHandler(actions, "blocked", "Je suis bloque"));
-    addDomListener(cleanups, refs.openTrophyCatalogBtn, "click", actions.openTrophyCatalog);
     addDomListener(cleanups, refs.playerTrophyBadge, "click", actions.openTrophyCatalog);
     addDomListener(cleanups, refs.levelReward, "click", actions.openTrophyCatalog);
     addDomListener(cleanups, refs.closeChecklistBtn, "click", actions.closeChecklist);
@@ -147,7 +119,10 @@
 
     addDomListener(cleanups, hostWindow, "pointerdown", actions.noteAssistantInteraction, true);
     addDomListener(cleanups, hostWindow, "keydown", actions.noteAssistantInteraction, true);
-    addDomListener(cleanups, hostWindow, "resize", actions.updateLayoutMetrics);
+    addDomListener(cleanups, hostWindow, "resize", () => {
+      actions.setHeaderMode(hostWindow.innerWidth < 900 ? "mobile" : "desktop");
+      actions.updateLayoutMetrics();
+    });
     addDomListener(cleanups, hostWindow, "load", actions.updateLayoutMetrics);
 
     return {

@@ -9,18 +9,7 @@
 <body>
 <div class="topbar">
   <div class="topbar-controls">
-    <div class="logo" aria-label="Logo CoeurGo dynamique"><div class="logo-title-row"><span class="logo-dynamic-text">CoeurGo</span><span class="logo-version" aria-label="Version 0.1">v0.1</span></div><small id="logoUpdateDate" data-commit-date="2026-05-11">Mise a jour: 2026-05-11</small></div>
-    <div class="header-actions">
-      <button class="toolbar-btn toolbar-btn-primary" id="gpsBtn" type="button">Me localiser</button>
-      <button class="toolbar-btn" id="viewRegionBtn" type="button">Vue Vernon</button>
-      <button class="toolbar-btn" id="openTrophyCatalogBtn" type="button">Catalogue</button>
-      <button class="toolbar-btn toolbar-btn-dae" id="topAddDaeBtn" type="button" disabled>Ajouter un DAE</button>
-      <button class="toolbar-btn toolbar-btn-remove" id="topRemoveDaeBtn" type="button" disabled>Retirer un DAE</button>
-      <div class="view-switch">
-        <button class="view-btn is-selected" id="desktopViewBtn" type="button">Desktop</button>
-        <button class="view-btn" id="mobileViewBtn" type="button">Mobile</button>
-      </div>
-    </div>
+    <div class="logo" aria-label="Logo CoeurGo dynamique"><div class="logo-title-row"><span class="logo-dynamic-text">CoeurGo</span><span class="logo-version" aria-label="Version 0.1">v0.1</span></div><small id="logoUpdateDate">Dernier commit: local</small></div>
   </div>
 
   <div class="topline">
@@ -114,11 +103,6 @@
       <div class="assistant-primary-body" id="assistantPrimaryBody">Je te rappelle l'etape suivante et je t'aide si tu bloques.</div>
     </div>
     <div class="assistant-log" id="assistantLog"></div>
-    <div class="assistant-actions">
-      <button class="assistant-chip" id="assistantNextBtn" type="button">Etape suivante</button>
-      <button class="assistant-chip" id="assistantExplainBtn" type="button">Expliquer</button>
-      <button class="assistant-chip" id="assistantBlockedBtn" type="button">Je suis bloque</button>
-    </div>
   </div>
   <div class="actions-grid">
     <button class="action-btn is-active" id="findBtn" type="button"></button>
@@ -165,27 +149,6 @@
 
 <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
 
-<script>
-(() => {
-  const updateEl = document.getElementById("logoUpdateDate");
-  if (!updateEl) return;
-  const commitDate = updateEl.dataset.commitDate;
-  if (!commitDate) return;
-
-  const formatRelative = () => {
-    const commit = new Date(`${commitDate}T00:00:00Z`);
-    const now = new Date();
-    const diffMs = now - commit;
-    const dayMs = 24 * 60 * 60 * 1000;
-    const diffDays = Math.max(0, Math.floor(diffMs / dayMs));
-    if (diffDays === 0) return `Mise a jour: ${commitDate} (aujourd'hui)`;
-    if (diffDays === 1) return `Mise a jour: ${commitDate} (il y a 1 jour)`;
-    return `Mise a jour: ${commitDate} (il y a ${diffDays} jours)`;
-  };
-
-  updateEl.textContent = formatRelative();
-})();
-</script>
 <script src="./store/index.js" defer></script>
 <script src="./src/events.js" defer></script>
 <script src="./src/vendor/leaflet.js" defer></script>
