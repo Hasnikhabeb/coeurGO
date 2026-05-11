@@ -1351,37 +1351,6 @@ function markerLabelFor(aed) {
   return `${escapeHtml(aed.name)} - ${escapeHtml(aed.city)} - ${escapeHtml(markerState.label)}`;
 }
 
-function buildAedPopupContent(aed) {
-  const markerState = getMarkerState(aed);
-  const popupAddress = aed.address ? escapeHtml(aed.address) : "Adresse non renseignee";
-  const popupCity = [aed.city, aed.postcode]
-    .filter(Boolean)
-    .map(value => escapeHtml(value))
-    .join(" - ") || "Ville non renseignee";
-  const stateDetail = markerState.detail && markerState.detail !== markerState.label
-    ? `<div class="dae-popup-detail">${escapeHtml(markerState.detail)}</div>`
-    : "";
-  return `
-    <div class="dae-popup-card">
-      <div class="dae-popup-kicker">DAE</div>
-      <div class="dae-popup-title">${escapeHtml(aed.name)}</div>
-      <div class="dae-popup-field">
-        <span class="dae-popup-label">Adresse</span>
-        <strong>${popupAddress}</strong>
-      </div>
-      <div class="dae-popup-field">
-        <span class="dae-popup-label">Ville</span>
-        <strong>${popupCity}</strong>
-      </div>
-      <div class="dae-popup-field dae-popup-field-status">
-        <span class="dae-popup-label">Statut</span>
-        <span class="dae-popup-status dae-popup-status--${escapeHtml(markerState.key)}">${escapeHtml(markerState.label)}</span>
-        ${stateDetail}
-      </div>
-    </div>
-  `;
-}
-
 function getViewportCandidates() {
   const paddedBounds = map.getBounds().pad(0.22);
   const candidates = [];
@@ -1411,13 +1380,6 @@ function syncMarker(aed) {
       fillOpacity: 0.95
     }).addTo(map);
     marker.bindTooltip(markerLabelFor(aed), { direction: "top", offset: [0, -10], className: "cg-tip" });
-    marker.bindPopup(buildAedPopupContent(aed), {
-      className: "cg-popup",
-      closeButton: false,
-      maxWidth: 320,
-      minWidth: 248,
-      autoPanPadding: [20, 20]
-    });
     markerLayers.set(aed.id, marker);
   } else {
     marker.setLatLng([aed.lat, aed.lng]);
@@ -1427,7 +1389,6 @@ function syncMarker(aed) {
       fillColor: style.fillColor
     });
     marker.setTooltipContent(markerLabelFor(aed));
-    marker.setPopupContent(buildAedPopupContent(aed));
   }
 }
 
