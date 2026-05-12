@@ -86,6 +86,39 @@ async function injectBuildInfo() {
   await writeFile(indexPath, html);
 }
 
+function envValue(names) {
+  for (const name of names) {
+    const value = process.env[name];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+  return "";
+}
+
+async function injectSupabaseConfig() {
+  const configPath = join(distDir, "src", "supabase-config.js");
+  const config = {
+    url: envValue([
+      "SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "VITE_SUPABASE_URL",
+      "PUBLIC_SUPABASE_URL"
+    ]),
+    anonKey: envValue([
+      "SUPABASE_ANON_KEY",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "VITE_SUPABASE_ANON_KEY",
+      "PUBLIC_SUPABASE_ANON_KEY"
+    ])
+  };
+
+  await writeFile(
+    configPath,
+    `window.__COEURGO_SUPABASE_CONFIG__ = Object.freeze(${JSON.stringify(config)});\n`
+  );
+}
+
 await rm(distDir, { recursive: true, force: true });
 await mkdir(distDir, { recursive: true });
 
@@ -94,5 +127,6 @@ for (const entry of entries) {
 }
 
 await injectBuildInfo();
+await injectSupabaseConfig();
 
 console.log(`Vercel static build ready in ${distDir}`);

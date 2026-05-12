@@ -4,12 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>❤️❤️❤️CoeurGO</title>
-<link rel="stylesheet" href="./styles/app.css?v=20260511-2220">
+<link rel="stylesheet" href="./styles/app.css?v=20260512-0001">
 </head>
 <body>
+<div class="login-overlay" id="authOverlay" hidden>
+  <div class="login-card">
+    <div class="login-badge">Compte joueur</div>
+    <h1 class="login-title" id="authTitle">Connexion</h1>
+    <p class="login-copy" id="authCopy">Connecte-toi pour sauvegarder ton score et tes validations.</p>
+    <div class="auth-tabs">
+      <button class="auth-tab is-active" id="authLoginTab" type="button">Connexion</button>
+      <button class="auth-tab" id="authSignupTab" type="button">Inscription</button>
+    </div>
+    <form class="login-form" id="authForm">
+      <label class="login-field" id="authNameField" hidden>
+        <span class="login-label">Pseudo</span>
+        <input class="login-input" id="authDisplayName" type="text" autocomplete="nickname" maxlength="60" placeholder="Yanis">
+      </label>
+      <label class="login-field">
+        <span class="login-label">Email</span>
+        <input class="login-input" id="authEmail" type="email" autocomplete="email" required placeholder="toi@example.com">
+      </label>
+      <label class="login-field">
+        <span class="login-label">Mot de passe</span>
+        <input class="login-input" id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="6 caracteres minimum">
+      </label>
+      <p class="login-error" id="authMessage" hidden></p>
+      <button class="login-submit" id="authSubmitBtn" type="submit">Se connecter</button>
+    </form>
+    <p class="login-note" id="authNote">Les comptes sont securises par Supabase Auth.</p>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="topbar-controls">
     <div class="logo" aria-label="Logo CoeurGo dynamique"><div class="logo-title-row"><span class="logo-dynamic-text">CoeurGo</span><span class="logo-version" aria-label="Version en cours de synchronisation">v...</span></div><small id="logoUpdateDate">verification GitHub...</small></div>
+    <div class="session-bar" id="sessionBar" hidden>
+      <span class="session-name" id="sessionName">Invite</span>
+      <button class="session-btn" id="adminPanelBtn" type="button" hidden>Admin</button>
+      <button class="session-btn" id="logoutBtn" type="button">Sortir</button>
+    </div>
   </div>
 
   <div class="topline">
@@ -149,11 +183,28 @@
 
 <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
 
-<script src="./store/index.js?v=20260511-2220" defer></script>
-<script src="./src/release.js?v=20260511-2220" defer></script>
-<script src="./src/events.js?v=20260511-2220" defer></script>
-<script src="./src/vendor/leaflet.js?v=20260511-2220" defer></script>
-<script src="./src/data/aeds-vernon.js?v=20260511-2220" defer></script>
-<script src="./src/app.js?v=20260511-2220" defer></script>
+<div class="admin-panel" id="adminPanel" hidden>
+  <div class="admin-card">
+    <div class="admin-head">
+      <div>
+        <div class="admin-kicker">Administration</div>
+        <div class="admin-title">Joueurs et roles</div>
+      </div>
+      <button class="admin-close" id="adminCloseBtn" type="button">x</button>
+    </div>
+    <div class="admin-summary" id="adminSummary">Chargement...</div>
+    <div class="admin-list" id="adminList"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="./src/supabase-config.js?v=20260512-0001" defer></script>
+<script src="./store/index.js?v=20260512-0001" defer></script>
+<script src="./src/auth.js?v=20260512-0001" defer></script>
+<script src="./src/release.js?v=20260512-0001" defer></script>
+<script src="./src/events.js?v=20260512-0001" defer></script>
+<script src="./src/vendor/leaflet.js?v=20260512-0001" defer></script>
+<script src="./src/data/aeds-vernon.js?v=20260512-0001" defer></script>
+<script src="./src/app.js?v=20260512-0001" defer></script>
 </body>
 </html>

@@ -119,6 +119,8 @@ const photoInput = document.getElementById("photoInput");
 const ASSISTANT_MAX_LOG = 6;
 const ASSISTANT_IDLE_DELAY_MS = 18000;
 let shouldFocusGuidanceLine = false;
+let cloudSyncReady = false;
+let cloudHydrating = false;
 
 const TROPHY_SHEET_PATH = "./assets/trophies/sheet.png";
 const TROPHY_MYSTERY_PATH = "./assets/trophies/mystery.png";
@@ -1228,7 +1230,44 @@ function appendCustomAeds(items) {
   }
 }
 
-function loadGameState() {
+function getCustomAedSnapshot() {
+  return aeds
+    .filter(aed => aed.isCustom)
+    .slice(0, MAX_CUSTOM_AEDS)
+    .map(({ id, lat, lng, name, address, city, postcode, sourceLabel }) => ({
+      id,
+      lat,
+      lng,
+      name,
+      address,
+      city,
+      postcode,
+      sourceLabel,
+      isCustom: true
+    }));
+}
+
+function buildGameStateSnapshot() {
+  return {
+    score,
+    missionStep,
+    currentAEDId,
+    verifiedIds: [...verifiedIds],
+    photos: { ...photoNames },
+    customAeds: getCustomAedSnapshot()
+  };
+}
+
+function removeCustomAedsFromCatalog() {
+  if (!aeds.some(aed => aed.isCustom)) {
+    return;
+  }
+  aeds = aeds.filter(aed => !aed.isCustom);
+  aedById = new Map(aeds.map(aed => [aed.id, aed]));
+}
+
+function resetGameStateValues() {
+  removeCustomAedsFromCatalog();
   verifiedIds = new Set();
   photoNames = Object.create(null);
   score = 0;
@@ -1236,57 +1275,105 @@ function loadGameState() {
   currentAEDId = null;
   pendingPhotoAEDId = null;
   pendingCustomDaeLocation = null;
+}
+
+function applyGameStateSnapshot(raw) {
+  if (!raw || typeof raw !== "object") {
+    resetGameStateValues();
+    return false;
+  }
+
+  resetGameStateValues();
+  appendCustomAeds(raw.customAeds || raw.custom_aeds);
+  score = Number.isFinite(Number(raw.score)) ? Math.max(0, Math.round(Number(raw.score))) : 0;
+
+  const rawVerifiedIds = raw.verifiedIds || raw.verified_ids;
+  if (Array.isArray(rawVerifiedIds)) {
+    verifiedIds = new Set(rawVerifiedIds.map(String).filter(id => aedById.has(id)));
+  }
+
+  const rawPhotos = raw.photos && typeof raw.photos === "object" ? raw.photos : {};
+  Object.entries(rawPhotos).forEach(([id, name]) => {
+    if (aedById.has(id) && typeof name === "string") {
+      photoNames[id] = name.slice(0, 80);
+    }
+  });
+
+  const nextCurrentId = raw.currentAEDId || raw.current_aed_id;
+  const nextMissionStep = raw.missionStep ?? raw.mission_step;
+  if (nextCurrentId && aedById.has(nextCurrentId) && !verifiedIds.has(nextCurrentId)) {
+    currentAEDId = nextCurrentId;
+    missionStep = [0, 1, 2].includes(Number(nextMissionStep)) ? Number(nextMissionStep) : 0;
+    pendingPhotoAEDId = missionStep === 2 ? currentAEDId : null;
+  }
+
+  return true;
+}
+
+function loadGameState() {
   try {
-    const raw = parseStoredObject(GAME_STORAGE_KEY);
-    appendCustomAeds(raw.customAeds);
-    score = Number.isFinite(Number(raw.score)) ? Math.max(0, Math.round(Number(raw.score))) : 0;
-    if (Array.isArray(raw.verifiedIds)) {
-      verifiedIds = new Set(raw.verifiedIds.map(String).filter(id => aedById.has(id)));
-    }
-    if (raw.photos && typeof raw.photos === "object") {
-      Object.entries(raw.photos).forEach(([id, name]) => {
-        if (aedById.has(id) && typeof name === "string") {
-          photoNames[id] = name.slice(0, 80);
-        }
-      });
-    }
-    if (raw.currentAEDId && aedById.has(raw.currentAEDId) && !verifiedIds.has(raw.currentAEDId)) {
-      currentAEDId = raw.currentAEDId;
-      missionStep = [0, 1, 2].includes(Number(raw.missionStep)) ? Number(raw.missionStep) : 0;
-      pendingPhotoAEDId = missionStep === 2 ? currentAEDId : null;
-    }
+    applyGameStateSnapshot(parseStoredObject(GAME_STORAGE_KEY));
   } catch (error) {
-    verifiedIds = new Set();
-    photoNames = Object.create(null);
-    score = 0;
-    missionStep = 0;
-    currentAEDId = null;
-    pendingPhotoAEDId = null;
+    resetGameStateValues();
   }
 }
 
 function saveGameState() {
-  safeSetStorage(GAME_STORAGE_KEY, JSON.stringify({
-    score,
-    missionStep,
-    currentAEDId,
-    verifiedIds: [...verifiedIds],
-    photos: photoNames,
-    customAeds: aeds
-      .filter(aed => aed.isCustom)
-      .slice(0, MAX_CUSTOM_AEDS)
-      .map(({ id, lat, lng, name, address, city, postcode, sourceLabel }) => ({
-        id,
-        lat,
-        lng,
-        name,
-        address,
-        city,
-        postcode,
-        sourceLabel,
-        isCustom: true
-      }))
-  }));
+  const snapshot = buildGameStateSnapshot();
+  safeSetStorage(GAME_STORAGE_KEY, JSON.stringify(snapshot));
+  if (cloudSyncReady && !cloudHydrating && window.CoeurGoAuth?.saveGameState) {
+    window.CoeurGoAuth.saveGameState(snapshot).catch(() => {});
+  }
+}
+
+function refreshGameUiAfterHydration() {
+  updateScore();
+  updateMissionCard();
+  updateActionButtons();
+  queueVisibleMarkersRefresh();
+  renderTrophyCatalog();
+}
+
+async function hydrateCloudGameState() {
+  const auth = window.CoeurGoAuth;
+  if (!auth?.loadGameState) {
+    return;
+  }
+  cloudHydrating = true;
+  try {
+    const remoteState = await auth.loadGameState();
+    if (remoteState && applyGameStateSnapshot(remoteState)) {
+      safeSetStorage(GAME_STORAGE_KEY, JSON.stringify(buildGameStateSnapshot()));
+      refreshGameUiAfterHydration();
+    }
+    cloudSyncReady = Boolean(auth.isReady?.());
+  } catch (error) {
+    showStatus("Synchronisation du compte indisponible. Le mode local reste actif.", "info");
+  } finally {
+    cloudHydrating = false;
+  }
+  if (cloudSyncReady) {
+    saveGameState();
+  }
+}
+
+function recordScoreEvent(action, points, aedId, metadata = {}) {
+  if (!window.CoeurGoAuth?.recordScoreEvent) {
+    return;
+  }
+  window.CoeurGoAuth.recordScoreEvent({ action, points, aedId, metadata }).catch(() => {});
+}
+
+async function initializeAuthSync() {
+  const auth = window.CoeurGoAuth;
+  if (!auth?.init) {
+    return;
+  }
+  try {
+    await auth.init();
+  } catch (error) {
+    showStatus("Authentification Supabase non disponible pour le moment.", "info");
+  }
 }
 
 function getCurrentAED() {
@@ -2166,6 +2253,7 @@ function findAED() {
     return;
   }
   score += 10;
+  recordScoreEvent("find", 10, currentAED.id, { aedName: currentAED.name });
   missionStep = 1;
   resetChecklist();
   updateScore({ animateTrophy: true });
@@ -2205,6 +2293,7 @@ function validateChecklist() {
     return;
   }
   score += 20;
+  recordScoreEvent("checklist", 20, currentAED.id, { checkedCount });
   missionStep = 2;
   pendingPhotoAEDId = currentAED.id;
   closeChecklist();
@@ -2270,6 +2359,7 @@ function finalizePhotoValidation(file, { aiConfirmed = false } = {}) {
   verifiedIds.add(currentAED.id);
   photoNames[currentAED.id] = typeof file.name === "string" ? file.name.slice(0, 80) : "photo-terrain.jpg";
   score += 20;
+  recordScoreEvent("photo", 20, currentAED.id, { aiConfirmed });
   missionStep = 0;
   pendingPhotoAEDId = null;
   const completedName = currentAED.name;
@@ -2355,6 +2445,13 @@ function registerInteractionEvents() {
   });
 }
 
+window.addEventListener("coeurgo:auth-session", () => {
+  hydrateCloudGameState();
+});
+window.addEventListener("coeurgo:auth-signout", () => {
+  cloudSyncReady = false;
+});
+
 loadCatalog();
 loadGameState();
 setHeaderMode(window.innerWidth < 900 ? "mobile" : "desktop");
@@ -2371,5 +2468,6 @@ refreshAssistantPrimary("proactive");
 updateClock();
 registerInteractionEvents();
 showStatus(`Mode Vernon pret. ${formatCount(aeds.length)} DAE charges.`, "info");
+initializeAuthSync();
 }
 })();
