@@ -47,26 +47,7 @@
   </div>
 
   <div class="topline">
-    <div class="brand-block">
-      <div class="player-card">
-        <div class="player-avatar">YA</div>
-        <div class="player-meta">
-          <div class="player-label">Joueur secouriste</div>
-          <div class="player-name-row">
-            <div class="player-name">Yanis et Aka</div>
-            <div class="player-trophy-badge is-empty" id="playerTrophyBadge" aria-label="Premier troph&eacute;e au niveau 5" title="Premier troph&eacute;e au niveau 5"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="hud-side">
-      <div class="clock-card">
-        <div class="clock-label">Horloge de mission</div>
-        <div class="clock-time" id="clockTime">00:00:00</div>
-        <div class="clock-date" id="clockDate">Chargement...</div>
-      </div>
-
       <div class="score">
         <span class="score-icon" aria-hidden="true">
           <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
@@ -98,6 +79,11 @@
         <span id="score">0</span>
         <span class="score-label">XP</span>
       </div>
+      <button class="location-btn" id="gpsBtn" type="button" aria-label="Me localiser">
+        <span class="location-icon" aria-hidden="true">◎</span>
+        <span class="location-text">Me localiser</span>
+        <span class="location-distance" id="gpsDistance">GPS off</span>
+      </button>
     </div>
   </div>
 

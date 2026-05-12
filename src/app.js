@@ -104,6 +104,7 @@ const checkBtn = document.getElementById("checkBtn");
 const addDaeBtn = document.getElementById("addDaeBtn");
 const photoBtn = document.getElementById("photoBtn");
 const gpsBtn = document.getElementById("gpsBtn");
+const gpsDistance = document.getElementById("gpsDistance");
 const topbar = document.querySelector(".topbar");
 const panel = document.querySelector(".panel");
 const checklistOverlay = document.getElementById("checklistOverlay");
@@ -1823,6 +1824,9 @@ async function updateGuidanceLine() {
 }
 
 function updateClock() {
+  if (!clockTime || !clockDate) {
+    return;
+  }
   const now = new Date();
   clockTime.textContent = now.toLocaleTimeString("fr-FR", {
     hour: "2-digit",
@@ -1928,6 +1932,7 @@ function updateMissionCard() {
           </div>
       </div>
     `;
+      updateGpsButton();
       return;
     }
     missionBox.innerHTML = `
@@ -1942,6 +1947,7 @@ function updateMissionCard() {
         </div>
       </div>
     `;
+    updateGpsButton();
     return;
   }
   const currentRouteKey = routeKeyFor(playerPos, currentAED);
@@ -1962,6 +1968,7 @@ function updateMissionCard() {
       </div>
     </div>
   `;
+  updateGpsButton();
 }
 
 function updateActionButtons() {
@@ -2043,11 +2050,32 @@ function updateScore({ animateTrophy = false } = {}) {
   renderTrophyCatalog();
 }
 
+function getCurrentDistanceLabel() {
+  const currentAED = getCurrentAED();
+  if (!playerPos || !currentAED) {
+    return playerPos ? "Position active" : "GPS off";
+  }
+  const currentRouteKey = routeKeyFor(playerPos, currentAED);
+  const hasDrivingRoute = guidanceRouteKey === currentRouteKey && Number.isFinite(guidanceRouteDistanceMeters);
+  const distanceToAed = hasDrivingRoute ? guidanceRouteDistanceMeters : distanceMeters(playerPos, currentAED);
+  return `DAE ${formatDistance(distanceToAed)}`;
+}
+
 function updateGpsButton() {
   if (!gpsBtn) {
     return;
   }
-  gpsBtn.textContent = playerPos ? "GPS actif" : "Me localiser";
+  gpsBtn.classList.toggle("is-active", Boolean(playerPos));
+  gpsBtn.setAttribute("aria-label", playerPos ? "Recentrer sur ma position" : "Me localiser");
+  const label = gpsBtn.querySelector(".location-text");
+  if (label) {
+    label.textContent = playerPos ? "Ma position" : "Me localiser";
+  } else {
+    gpsBtn.textContent = playerPos ? "Ma position" : "Me localiser";
+  }
+  if (gpsDistance) {
+    gpsDistance.textContent = getCurrentDistanceLabel();
+  }
 }
 
 function updatePlayerMarker() {
@@ -2084,6 +2112,12 @@ function updatePlayerMarker() {
       fillColor: "#06b6d4",
       fillOpacity: 1
     }).addTo(map);
+    playerMarker.bindTooltip("Ma position", {
+      className: "cg-tip",
+      direction: "top",
+      offset: [0, -8],
+      opacity: 1
+    });
   } else {
     playerMarker.setLatLng([playerPos.lat, playerPos.lng]);
   }
