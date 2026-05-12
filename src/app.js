@@ -1239,14 +1239,18 @@ function normaliseCatalogAed(raw, index) {
   return raw;
 }
 
-function loadCatalog() {
+function buildPreloadedVernonCatalog() {
   const source = Array.isArray(window.PRELOADED_AEDS) ? window.PRELOADED_AEDS : [];
   const normalised = [];
   for (let index = 0; index < source.length; index += 1) {
     const item = normaliseCatalogAed(source[index], index);
     if (item) normalised.push(item);
   }
-  aeds = normalised.filter(isVernonAreaAed);
+  return normalised.filter(isVernonAreaAed);
+}
+
+function loadCatalog() {
+  aeds = buildPreloadedVernonCatalog();
   aedById = new Map(aeds.map(aed => [aed.id, aed]));
 }
 
@@ -1270,19 +1274,39 @@ function applyRemoteCatalog(items) {
   if (!Array.isArray(items) || !items.length) {
     return false;
   }
-  const normalised = [];
+  const mergedById = new Map();
+  buildPreloadedVernonCatalog().forEach(aed => {
+    mergedById.set(aed.id, aed);
+  });
+  aeds
+    .filter(aed => aed.isCustom)
+    .forEach(aed => {
+      if (!mergedById.has(aed.id)) {
+        mergedById.set(aed.id, aed);
+      }
+    });
+
   for (let index = 0; index < items.length; index += 1) {
-    const item = normaliseCatalogAed({ ...items[index] }, index);
-    if (item && isVernonAreaAed(item)) {
-      normalised.push(item);
+    const remote = normaliseCatalogAed({ ...items[index] }, mergedById.size + index);
+    if (!remote || !isVernonAreaAed(remote)) {
+      continue;
+    }
+    const current = mergedById.get(remote.id);
+    const merged = normaliseCatalogAed({
+      ...(current || {}),
+      ...remote,
+      isCustom: current ? Boolean(current.isCustom) : Boolean(remote.isCustom)
+    }, mergedById.size + index);
+    if (merged) {
+      mergedById.set(merged.id, merged);
     }
   }
-  if (!normalised.length) {
+  if (!mergedById.size) {
     return false;
   }
   markerLayers.forEach(marker => map.removeLayer(marker));
   markerLayers.clear();
-  aeds = normalised;
+  aeds = [...mergedById.values()];
   aedById = new Map(aeds.map(aed => [aed.id, aed]));
   if (currentAEDId && !aedById.has(currentAEDId)) {
     currentAEDId = null;
