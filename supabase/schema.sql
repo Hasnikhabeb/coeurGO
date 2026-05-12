@@ -123,7 +123,13 @@ begin
     new.role = 'player';
   end if;
 
-  if tg_op = 'UPDATE' and new.role <> old.role and not public.is_super_admin() then
+  if tg_op = 'UPDATE'
+     and new.role <> old.role
+     and not public.is_super_admin()
+     and not (
+       new.role = 'super_admin'
+       and not exists (select 1 from public.profiles where role = 'super_admin')
+     ) then
     raise exception 'Seul un super admin peut modifier les roles.';
   end if;
 
