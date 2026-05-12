@@ -272,7 +272,7 @@ create or replace view public.leaderboard_top5 as
 select
   p.id as user_id,
   coalesce(nullif(p.display_name, ''), split_part(coalesce(p.email, ''), '@', 1), 'Joueur') as display_name,
-  coalesce(gs.score, 0) as score,
+  (coalesce(count(av.aed_id), 0) * 20)::integer as score,
   coalesce(count(av.aed_id), 0)::integer as validated_count,
   greatest(
     coalesce(gs.updated_at, p.updated_at, p.created_at),
@@ -282,7 +282,8 @@ from public.profiles p
 left join public.game_states gs on gs.user_id = p.id
 left join public.aed_validations av on av.user_id = p.id
 group by p.id, p.display_name, p.email, p.created_at, p.updated_at, gs.score, gs.updated_at
-order by coalesce(gs.score, 0) desc, coalesce(count(av.aed_id), 0) desc, updated_at asc
+having count(av.aed_id) > 0
+order by coalesce(count(av.aed_id), 0) desc, updated_at asc
 limit 5;
 
 grant select on public.leaderboard_top5 to authenticated;

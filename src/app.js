@@ -71,6 +71,7 @@ window.__COEURGO_VERNON_APP_LOADED = true;
 const GAME_STORAGE_KEY = "coeurgo-vernon-simple-v1";
 const VIEW_STORAGE_KEY = "coeurgo-vernon-simple-view-v1";
 const POINTS_PER_LEVEL = 50;
+const POINTS_PER_DAE_VALIDATION = 20;
 const TOTAL_LEVELS = 100;
 const TROPHY_UNLOCK_STEP = 5;
 const VERNON_CENTER = { lat: 49.092, lng: 1.485 };
@@ -1198,6 +1199,25 @@ function validatorLabelFor(aedOrId) {
   return detail?.validatorName ? ` par ${detail.validatorName}` : "";
 }
 
+function getCurrentProfileId() {
+  return window.CoeurGoAuth?.getProfile?.()?.id || "";
+}
+
+function syncScoreFromOwnValidations() {
+  const userId = getCurrentProfileId();
+  if (!userId) {
+    return false;
+  }
+  let ownValidationCount = 0;
+  validationDetails.forEach(detail => {
+    if (detail.userId === userId) {
+      ownValidationCount += 1;
+    }
+  });
+  score = ownValidationCount * POINTS_PER_DAE_VALIDATION;
+  return true;
+}
+
 function getPendingCount() {
   return Math.max(0, aeds.length - verifiedIds.size);
 }
@@ -1302,6 +1322,7 @@ function applyRemoteValidations(items) {
     missionStep = 0;
     pendingPhotoAEDId = null;
   }
+  syncScoreFromOwnValidations();
   return true;
 }
 
@@ -1378,8 +1399,8 @@ function applyGameStateSnapshot(raw) {
   const nextMissionStep = raw.missionStep ?? raw.mission_step;
   if (nextCurrentId && aedById.has(nextCurrentId) && !verifiedIds.has(nextCurrentId)) {
     currentAEDId = nextCurrentId;
-    missionStep = [0, 1, 2].includes(Number(nextMissionStep)) ? Number(nextMissionStep) : 0;
-    pendingPhotoAEDId = missionStep === 2 ? currentAEDId : null;
+    missionStep = Number(nextMissionStep) === 1 ? 1 : 0;
+    pendingPhotoAEDId = null;
   }
 
   return true;
@@ -1449,6 +1470,8 @@ async function hydrateCloudGameState() {
     const remoteState = await auth.loadGameState();
     if (remoteState && applyGameStateSnapshot(remoteState)) {
       safeSetStorage(GAME_STORAGE_KEY, JSON.stringify(buildGameStateSnapshot()));
+    } else {
+      resetGameStateValues();
     }
     if (remoteCatalog?.validations) {
       applyRemoteValidations(remoteCatalog.validations);
@@ -2085,22 +2108,20 @@ function updateActionButtons() {
   const allDone = remaining === 0;
   const canFind = !allDone && (!currentAED || missionStep === 0);
   const canCheck = Boolean(currentAED) && missionStep === 1;
-  const canRemoveCustomDae = Boolean(currentAED?.isCustom);
   const canAddDae = Boolean(pendingCustomDaeLocation || playerPos);
-  const canPhoto = Boolean(currentAED) && missionStep === 2;
   findBtn.disabled = !canFind;
   checkBtn.disabled = !canCheck;
   addDaeBtn.disabled = !canAddDae;
-  photoBtn.disabled = !canPhoto;
+  photoBtn.disabled = true;
   findBtn.className = `action-btn${canFind ? " is-active" : ""}${missionStep >= 1 && !allDone ? " is-done" : ""}`;
-  checkBtn.className = `action-btn${canCheck ? " is-active" : ""}${missionStep >= 2 && !allDone ? " is-done" : ""}`;
+  checkBtn.className = `action-btn${canCheck ? " is-active" : ""}`;
   addDaeBtn.className = `action-btn is-compact is-add-dae${canAddDae ? " is-active" : ""}`;
-  photoBtn.className = `action-btn${canPhoto ? " is-active" : ""}`;
+  photoBtn.className = "action-btn";
   if (allDone) {
     setActionButtonContent(findBtn, "", "Termine", "Toutes les missions Vernon sont validees");
     setActionButtonContent(checkBtn, "", "Verifier", "Aucune mission active");
     setActionButtonContent(addDaeBtn, "", "Ajouter un DAE", pendingCustomDaeLocation ? "Ajouter le point memorise" : (playerPos ? "Ajouter a ma position GPS" : "Clique un point libre ou active le GPS"));
-    setActionButtonContent(photoBtn, "", "Photo", "Aucune photo en attente");
+    setActionButtonContent(photoBtn, "", "Photo", "Validation photo en pause");
     refreshAssistantPrimary("proactive");
     return;
   }
@@ -2108,7 +2129,7 @@ function updateActionButtons() {
     setActionButtonContent(findBtn, "", "Trouver", playerPos ? "Lancer la mission la plus proche a Vernon" : "Choisir un DAE ou lancer la mission la plus proche");
     setActionButtonContent(checkBtn, "", "Verifier", "Disponible apres Trouver");
     setActionButtonContent(addDaeBtn, "", "Ajouter un DAE", pendingCustomDaeLocation ? "Ajouter le point memorise" : (playerPos ? "Ajouter a ma position GPS" : "Clique un point libre ou active le GPS"));
-    setActionButtonContent(photoBtn, "", "Photo", "Disponible apres la checklist");
+    setActionButtonContent(photoBtn, "", "Photo", "Validation photo en pause");
     refreshAssistantPrimary("proactive");
     return;
   }
@@ -2116,22 +2137,22 @@ function updateActionButtons() {
     setActionButtonContent(findBtn, "", "Trouver", playerPos ? "Lancer la mission la plus proche a Vernon" : "Lancer la mission selectionnee");
     setActionButtonContent(checkBtn, "", "Verifier", "Disponible apres Trouver");
     setActionButtonContent(addDaeBtn, "", "Ajouter un DAE", pendingCustomDaeLocation ? "Ajouter le point memorise" : (playerPos ? "Ajouter a ma position GPS" : "Clique un point libre ou active le GPS"));
-    setActionButtonContent(photoBtn, "", "Photo", "Disponible apres la checklist");
+    setActionButtonContent(photoBtn, "", "Photo", "Validation photo en pause");
     refreshAssistantPrimary("proactive");
     return;
   }
   if (missionStep === 1) {
-    setActionButtonContent(findBtn, "", "Trouve", "+10 XP enregistres");
-    setActionButtonContent(checkBtn, "", "Verifier", "Ouvrir la checklist terrain");
+    setActionButtonContent(findBtn, "", "Trouve", "Reperage confirme");
+    setActionButtonContent(checkBtn, "", "Valider", `+${POINTS_PER_DAE_VALIDATION} XP si le DAE est libre`);
     setActionButtonContent(addDaeBtn, "", "Ajouter un DAE", pendingCustomDaeLocation ? "Ajouter le point memorise" : "Ajouter le DAE repere ici");
-    setActionButtonContent(photoBtn, "", "Photo", "Disponible apres la validation terrain");
+    setActionButtonContent(photoBtn, "", "Photo", "Validation photo en pause");
     refreshAssistantPrimary("proactive");
     return;
   }
-  setActionButtonContent(findBtn, "", "Trouve", "+10 XP enregistres");
-  setActionButtonContent(checkBtn, "", "Verifie", "+20 XP enregistres");
+  setActionButtonContent(findBtn, "", "Trouve", "Reperage confirme");
+  setActionButtonContent(checkBtn, "", "Valider", `+${POINTS_PER_DAE_VALIDATION} XP si le DAE est libre`);
   setActionButtonContent(addDaeBtn, "", "Ajouter un DAE", pendingCustomDaeLocation ? "Ajouter le point memorise" : "Ajouter un DAE sans couper la mission");
-  setActionButtonContent(photoBtn, "", "Photo", "Ajouter une photo et finir la mission");
+  setActionButtonContent(photoBtn, "", "Photo", "Validation photo en pause");
   refreshAssistantPrimary("proactive");
 }
 
@@ -2441,15 +2462,12 @@ function findAED() {
     }
     return;
   }
-  score += 10;
-  recordScoreEvent("find", 10, currentAED.id, { aedName: currentAED.name });
   missionStep = 1;
   resetChecklist();
-  updateScore({ animateTrophy: true });
   updateMissionCard();
   updateActionButtons();
   saveGameState();
-  showStatus("DAE repere. La checklist s'ouvre pour continuer simplement.", "success");
+  showStatus("DAE repere. La checklist s'ouvre pour valider le terrain.", "success");
   openChecklist();
 }
 
@@ -2463,14 +2481,35 @@ function checkAED() {
     showStatus("Commence par Trouver pour confirmer le reperage.", "info");
     return;
   }
-  if (missionStep === 2) {
-    showStatus("Le controle est deja valide. Ajoute simplement une photo.", "info");
-    return;
-  }
   openChecklist();
 }
 
-function validateChecklist() {
+async function claimCurrentAedValidation(currentAED, checkedCount) {
+  if (!window.CoeurGoAuth?.claimAedValidation || !window.CoeurGoAuth.isReady?.()) {
+    return null;
+  }
+  try {
+    return await window.CoeurGoAuth.claimAedValidation({
+      aedId: currentAED.id,
+      metadata: {
+        checkedCount,
+        photoRequired: false
+      }
+    });
+  } catch (error) {
+    if (error?.code === "AED_ALREADY_VALIDATED") {
+      await refreshCloudValidations().catch(() => {});
+      closeChecklist();
+      showStatus("Ce DAE vient deja d'etre valide par un autre utilisateur.", "info");
+      selectNextAED();
+      return false;
+    }
+    showStatus("Validation Supabase impossible pour le moment. Reessaie dans un instant.", "error");
+    return false;
+  }
+}
+
+async function validateChecklist() {
   const currentAED = getCurrentAED();
   const checkedCount = checklistItems.filter(item => item.checked).length;
   if (!currentAED) {
@@ -2481,107 +2520,51 @@ function validateChecklist() {
     showStatus("Coche au moins un point avant de valider.", "error");
     return;
   }
-  score += 20;
-  recordScoreEvent("checklist", 20, currentAED.id, { checkedCount });
-  missionStep = 2;
-  pendingPhotoAEDId = currentAED.id;
+  validateChecklistBtn.disabled = true;
+  const cloudValidation = await claimCurrentAedValidation(currentAED, checkedCount);
+  if (cloudValidation === false) {
+    updateChecklistState();
+    return;
+  }
+  verifiedIds.add(currentAED.id);
+  validationDetails.set(currentAED.id, cloudValidation || {
+    aedId: currentAED.id,
+    userId: getCurrentProfileId(),
+    validatorName: repairText(window.CoeurGoAuth?.getProfile?.()?.display_name || "Utilisateur local"),
+    photoName: "",
+    validatedAt: new Date().toISOString()
+  });
+  if (!syncScoreFromOwnValidations()) {
+    score += POINTS_PER_DAE_VALIDATION;
+  }
+  recordScoreEvent("dae_validation", POINTS_PER_DAE_VALIDATION, currentAED.id, {
+    checkedCount,
+    photoRequired: false
+  });
+  missionStep = 0;
+  pendingPhotoAEDId = null;
   closeChecklist();
   updateScore({ animateTrophy: true });
   updateMissionCard();
   updateActionButtons();
   saveGameState();
-  showStatus(`${checkedCount} point${checkedCount > 1 ? "s" : ""} valide${checkedCount > 1 ? "s" : ""}. Ajoute maintenant une photo.`, "success");
+  queueVisibleMarkersRefresh();
+  showStatus(`${currentAED.name} valide. +${POINTS_PER_DAE_VALIDATION} XP.`, "success");
   resetChecklist();
-  requestAnimationFrame(() => photoBtn.focus());
+  selectNextAED();
 }
 
 function photoAED() {
-  const currentAED = getCurrentAED();
-  if (!currentAED) {
-    showStatus("Aucune mission active pour la photo.", "error");
-    return;
-  }
-  if (missionStep < 2) {
-    showStatus("La photo se debloque apres la checklist.", "info");
-    return;
-  }
-  pendingPhotoAEDId = currentAED.id;
-  photoInput.value = "";
-  photoInput.click();
+  showStatus("La validation photo est temporairement en pause.", "info");
 }
 
 async function handlePhotoWithDaeAi(file) {
-  const currentAED = aedById.get(pendingPhotoAEDId) || getCurrentAED();
-  if (!file || !currentAED || isVerified(currentAED)) {
-    pendingPhotoAEDId = null;
-    return;
-  }
-  if (!isAcceptedPhotoFile(file)) {
-    showStatus("Ajoute une photo image valide de moins de 8 Mo.", "error");
-    return;
-  }
-  showStatus("en cours de r\u00e9flexion", "info");
-  try {
-    const analysis = await analysePhotoWithDaeAi(file);
-    if (analysis.verdict === "confirm") {
-      flashScreen("success");
-      await finalizePhotoValidation(file, { aiConfirmed: true });
-      return;
-    }
-    if (analysis.verdict === "reject") {
-      flashScreen("error");
-      showStatus("Le DAE n'est pas valide. Reprends une photo.", "error");
-      return;
-    }
-    showStatus("en cours de r\u00e9flexion", "info");
-  } catch (error) {
-    showStatus("en cours de r\u00e9flexion", "info");
-  }
+  showStatus("La validation photo est temporairement en pause.", "info");
 }
 
 async function finalizePhotoValidation(file, { aiConfirmed = false } = {}) {
-  const currentAED = aedById.get(pendingPhotoAEDId) || getCurrentAED();
-  if (!file || !currentAED || isVerified(currentAED)) {
-    pendingPhotoAEDId = null;
-    return;
-  }
-  let cloudValidation = null;
-  if (window.CoeurGoAuth?.claimAedValidation && window.CoeurGoAuth.isReady?.()) {
-    try {
-      cloudValidation = await window.CoeurGoAuth.claimAedValidation({
-        aedId: currentAED.id,
-        photoName: typeof file.name === "string" ? file.name.slice(0, 80) : "photo-terrain.jpg",
-        metadata: { aiConfirmed }
-      });
-    } catch (error) {
-      if (error?.code === "AED_ALREADY_VALIDATED") {
-        await refreshCloudValidations().catch(() => {});
-        pendingPhotoAEDId = null;
-        showStatus("Ce DAE vient deja d'etre valide par un autre utilisateur.", "info");
-        selectNextAED();
-        return;
-      }
-      showStatus("Validation Supabase impossible pour le moment. Reessaie dans un instant.", "error");
-      return;
-    }
-  }
-  verifiedIds.add(currentAED.id);
-  if (cloudValidation) {
-    validationDetails.set(currentAED.id, cloudValidation);
-  }
-  photoNames[currentAED.id] = typeof file.name === "string" ? file.name.slice(0, 80) : "photo-terrain.jpg";
-  score += 20;
-  recordScoreEvent("photo", 20, currentAED.id, { aiConfirmed });
-  missionStep = 0;
   pendingPhotoAEDId = null;
-  const completedName = currentAED.name;
-  updateScore({ animateTrophy: true });
-  saveGameState();
-  queueVisibleMarkersRefresh();
-  showStatus(aiConfirmed
-    ? `DAE confirm\u00e9. ${completedName} valide avec photo. Passage automatique \u00e0 la mission suivante.`
-    : `${completedName} valide avec photo. Passage automatique a la mission suivante.`, "success");
-  selectNextAED();
+  showStatus("La validation photo est temporairement en pause.", "info");
 }
 
 function resetGame() {
@@ -2675,7 +2658,6 @@ loadGameState();
 setHeaderMode(window.innerWidth < 900 ? "mobile" : "desktop");
 fitToVernon();
 queueVisibleMarkersRefresh();
-prepareDaeAiTrainingSet();
 updateGpsButton();
 updateScore();
 updateMissionCard();

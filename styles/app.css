@@ -896,7 +896,7 @@ body.mobile-mode .panel{left:50%;right:auto;width:min(410px,calc(100vw - 16px));
 .screen-flash.is-error{background:rgba(239,68,68,.45)}
 .screen-flash.is-active{animation:screenFlashPulse .48s ease-out}
 @keyframes screenFlashPulse{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
-.actions-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"find check photo";gap:8px}
+.actions-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"find check";gap:8px}
 .action-btn{width:100%;min-height:64px;padding:10px 12px;border:none;border-radius:16px;background:#334155;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:6px;text-align:left}
 .action-btn.is-compact{min-height:54px;padding:8px 10px;gap:4px}
 .action-btn-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:900}
@@ -912,7 +912,7 @@ body.mobile-mode .panel{left:50%;right:auto;width:min(410px,calc(100vw - 16px));
 #findBtn{grid-area:find}
 #checkBtn{grid-area:check}
 #addDaeBtn{display:none}
-#photoBtn{grid-area:photo}
+#photoBtn{display:none;grid-area:photo}
 body.mobile-mode .actions-grid{grid-template-columns:1fr}
 .checklist-overlay{position:fixed;inset:0;background:rgba(2,6,23,.82);display:none;align-items:center;justify-content:center;padding:18px;z-index:950}
 .checklist-overlay.is-open{display:flex}
@@ -954,7 +954,7 @@ body:not(.mobile-mode) .level-track{height:22px}
 body:not(.mobile-mode) .level-meta{margin-top:6px}
 body:not(.mobile-mode) #missionBox{grid-area:mission;height:100%;overflow:hidden}
 body:not(.mobile-mode) .status-box{grid-area:status;padding:6px 10px;min-height:0;display:none!important}
-body:not(.mobile-mode) .actions-grid{grid-area:actions;grid-template-columns:1fr;grid-template-areas:"find" "check" "photo";height:100%;gap:4px}
+body:not(.mobile-mode) .actions-grid{grid-area:actions;grid-template-columns:1fr;grid-template-areas:"find" "check";height:100%;gap:4px}
 body:not(.mobile-mode) .assistant-card{grid-area:assistant;height:100%;padding:8px 10px;gap:6px}
 body:not(.mobile-mode) .assistant-kicker{font-size:9px}
 body:not(.mobile-mode) .assistant-title{font-size:14px}
@@ -1008,7 +1008,7 @@ body.mobile-mode .mission-kicker{font-size:10px}
 body.mobile-mode .mission-name{font-size:18px;line-height:1.12}
 body.mobile-mode .mission-details{font-size:12px;line-height:1.35}
 body.mobile-mode .mission-distance{padding:6px 10px;font-size:12px}
-body.mobile-mode .actions-grid{order:2;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"find check" "photo photo";gap:8px}
+body.mobile-mode .actions-grid{order:2;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"find check";gap:8px}
 body.mobile-mode .action-btn{min-height:52px;padding:9px 10px}
 body.mobile-mode .action-btn.is-compact{min-height:46px;padding:8px 10px}
 body.mobile-mode .action-btn-title{font-size:14px}
@@ -1134,8 +1134,8 @@ body.mobile-mode .mission-details{
 }
 body.mobile-mode .mission-distance{padding:5px 8px;font-size:11px}
 body.mobile-mode .actions-grid{
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  grid-template-areas:"find check photo";
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-areas:"find check";
   gap:6px;
 }
 body.mobile-mode .action-btn,
