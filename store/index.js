@@ -5,6 +5,7 @@
     aeds: [],
     aedById: new Map(),
     verifiedIds: new Set(),
+    validationDetails: new Map(),
     photoNames: Object.create(null),
     score: 0,
     missionStep: 0,

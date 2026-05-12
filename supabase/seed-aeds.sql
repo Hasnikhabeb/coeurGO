@@ -1,0 +1,57 @@
+-- Catalogue initial des DAE de Vernon pour Supabase.
+-- A executer apres supabase/schema.sql.
+
+insert into public.aeds (
+  id, lat, lng, name, address, city, postcode,
+  validation_status, validation_label, function_state, source_label, is_custom
+)
+values
+  ('geodae-4957', 49.085, 1.49923, 'MONLOGEMENT27 VERNON', '30 Avenue Ile de France', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-6125', 49.0931, 1.48528, 'DAE de l''hôtel de ville', '18 Place Adolphe Barette', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-17225', 49.076, 1.49385, 'DAE GYMNASE COSEC BOUTARDES', '12 Rue Édith Blanchet', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-17226', 49.082, 1.48768, 'DAE GYMNASE DE GAMILLY', '2 Rue Robert Schuman', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-122826', 49.0915, 1.47864, 'DAE de la Gare VERNON-GIVERNY', '1 PLACE DE LA GARE', 'Vernon', '27200', 'green', 'en attente de validation', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-189314', 49.09744, 1.475291, 'DDPN 27 - 4 avenue Foch - accueil RDC', '4 avenue Foch', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-195722', 49.0808, 1.48669, 'DDFIP Eure - 21 bis boulevard Georges Azemia - Accueil', '21 bis boulevard Georges Azemia', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-205571', 49.091, 1.4802, 'CLA205000226', '122 Rue d''Albuféra', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-205572', 49.0901, 1.48306, 'CLA205000310', '22 Avenue Pierre Mendès France', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-205573', 49.0901, 1.48306, 'CLA205000344', '22 Avenue Pierre Mendès France', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-205742', 49.0831, 1.50175, 'Vernon', '12 Avenue Ile de France', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-231193', 49.0984, 1.48763, 'FRED PA-1 ENTIEREMENT AUTOMATIQUE', '1a Rue ogereau', 'Vernom', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-235313', 49.0997, 1.47172, 'FRED PA-1 ENTIEREMENT AUTOMATIQUE', '3 16 rue Bonaparte', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-237827', 49.0805, 1.47694, 'FRED EASY LIFE AUTOMATIQUE', '45 Rue des Fontenelles', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-237828', 49.0807, 1.48089, 'FRED EASY LIFE AUTOMATIQUE', '35 Rue de la Guitoune', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-237836', 49.0965, 1.47265, 'FRED PA-1 ENTIEREMENT AUTOMATIQUE', '3 9 rue alexis de toqueville', 'vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-237837', 49.0758, 1.49485, 'FRED PA-1 ENTIEREMENT AUTOMATIQUE', '2ter Édith blanchet', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-242306', 49.1104, 1.49941, 'FRED PA-1 ENTIEREMENT AUTOMATIQUE', '11 Campus de l''espace', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-254960', 49.0897, 1.48567, 'CLA233512135', '5 Place de la République', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-255659', 49.1082, 1.49904, 'DAE-ITII', '1 Avenue Hubert Curien', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-273332', 49.0865, 1.45745, 'CLA234412777', '40 Sente de la Fosse Diard', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-273333', 49.0865, 1.45745, 'CLA234413296', '40 Sente de la Fosse Diard', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-289049', 49.07893, 1.503078, 'Transdev Normandie Val de Seine - Boulevard d''Aylmer - ZAC les Bourdines', '15 Boulevard d''Aylmer', 'VERNON', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-289050', 49.09025, 1.484522, 'Transdev Normandie Val de Seine - 15 place de la République - accueil', '15 place de la République', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-289507', 49.097, 1.46166, 'DAE - Plastic Omnium Vernon', '12 Chemin du Virolet', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-299758', 49.0954, 1.4681, 'AMI VER', '14 Rue de l''Artisanat', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-321661', 49.09494, 1.481604, 'Association Educative des Portes de l''Eure - 8 rue du Vieux Chateau - En face du lavabo collectif en entrant par l''est du bâtiment', '8 rue du Vieux Chateau', 'VERNON', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-336634', 49.0938, 1.48174, 'LALOUEL PATRICK', '1 RUE DU VIEUX CHATEAU', 'VERNON', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-341150', 49.0915, 1.47842, 'GARE DE VERNON GIVERNY', '3 Rue de la Gare', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-351392', 49.088455, 1.478948, 'Mutualite Française Normandie - 11 bis rue du Parc - Accueil du centre dentaire', '11 bis rue du Parc', 'Vernon', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-353523', 49.0795, 1.47701, 'DAE LYCÉE GÉNÉRAL ET TECHNOLOGIQUE GEORGES DUMEZIL - BAT H2', '45 ROUTE D''IVRY COULOIR BUREAU VIE SCOLAIRE BAT H2', 'Vernon cedex', '27207', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-353676', 49.0811, 1.47741, 'DAE LYCÉE GÉNÉRAL ET TECHNOLOGIQUE GEORGES DUMEZIL - BAT A', '22 ROUTE D''IVRY COULOIR VIE SCOLAIRE BAT A', 'Vernon cedex', '27207', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-362074', 49.0908, 1.49104, 'DAE CAZAM VERNON', '2 RUE LOUIS HEBERT', 'VERNON', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-371695', 49.1073, 1.49569, 'SKF Magnetic Mechatronics - 0 Avenue Hubert Curien - Bât H4 - Plateau de l''espace', '0 Avenue Hubert Curien - Bât H4', 'VERNON', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-374763', 49.0997, 1.45607, 'SKF Magnetic Mechatronics - Avenue Hubert Curien - Bât H4 - Plateau de l''espace', '3 Avenue Hubert Curien - Bât H4', 'VERNON', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false),
+  ('geodae-385309', 49.083168, 1.495731, 'JMT DORURE', '13 RUE DE NORMANDIE', 'VERNON', '27200', 'green', 'validées', 'En fonctionnement', 'GeoDAE / Vernon', false)
+on conflict (id) do update set
+  lat = excluded.lat,
+  lng = excluded.lng,
+  name = excluded.name,
+  address = excluded.address,
+  city = excluded.city,
+  postcode = excluded.postcode,
+  validation_status = excluded.validation_status,
+  validation_label = excluded.validation_label,
+  function_state = excluded.function_state,
+  source_label = excluded.source_label,
+  is_custom = excluded.is_custom,
+  updated_at = now();

@@ -182,6 +182,128 @@ function normalizeRemoteState(data) {
   };
 }
 
+function normalizeRemoteAed(row) {
+  if (!row) return null;
+  return {
+    id: String(row.id || ""),
+    lat: Number(row.lat),
+    lng: Number(row.lng),
+    name: row.name || "DAE Vernon",
+    address: row.address || "",
+    city: row.city || "",
+    postcode: row.postcode || "",
+    validationStatus: row.validation_status || "",
+    validationLabel: row.validation_label || "",
+    functionState: row.function_state || "",
+    sourceLabel: row.source_label || "Supabase",
+    isCustom: Boolean(row.is_custom)
+  };
+}
+
+function normalizeRemoteValidation(row) {
+  if (!row) return null;
+  return {
+    aedId: String(row.aed_id || ""),
+    userId: row.user_id || "",
+    validatorName: row.validator_name || "Utilisateur",
+    photoName: row.photo_name || "",
+    validatedAt: row.validated_at || ""
+  };
+}
+
+function aedSelectColumns() {
+  return "id,lat,lng,name,address,city,postcode,validation_status,validation_label,function_state,source_label,is_custom";
+}
+
+async function loadAedCatalog() {
+  if (!client || !session?.user) return null;
+  const [{ data: aeds, error: aedError }, { data: validations, error: validationError }] = await Promise.all([
+    client.from("aeds").select(aedSelectColumns()).order("name", { ascending: true }),
+    client.from("aed_validations").select("aed_id,user_id,validator_name,photo_name,validated_at")
+  ]);
+  if (aedError) throw aedError;
+  if (validationError) throw validationError;
+  return {
+    aeds: (aeds || []).map(normalizeRemoteAed).filter(Boolean),
+    validations: (validations || []).map(normalizeRemoteValidation).filter(Boolean)
+  };
+}
+
+async function loadAedValidations() {
+  if (!client || !session?.user) return [];
+  const { data, error } = await client
+    .from("aed_validations")
+    .select("aed_id,user_id,validator_name,photo_name,validated_at");
+  if (error) throw error;
+  return (data || []).map(normalizeRemoteValidation).filter(Boolean);
+}
+
+async function createCustomAed(aed) {
+  if (!client || !session?.user || !aed) return null;
+  const payload = {
+    id: String(aed.id || ""),
+    lat: Number(aed.lat),
+    lng: Number(aed.lng),
+    name: String(aed.name || "DAE ajoute"),
+    address: String(aed.address || ""),
+    city: String(aed.city || ""),
+    postcode: String(aed.postcode || ""),
+    validation_status: String(aed.validationStatus || "custom"),
+    validation_label: String(aed.validationLabel || "ajoute sur le terrain"),
+    function_state: String(aed.functionState || "A verifier"),
+    source_label: String(aed.sourceLabel || "Ajout terrain"),
+    is_custom: true,
+    created_by: session.user.id
+  };
+  const { data, error } = await client
+    .from("aeds")
+    .insert(payload)
+    .select(aedSelectColumns())
+    .maybeSingle();
+  if (error) {
+    if (error.code === "23505") return null;
+    throw error;
+  }
+  return normalizeRemoteAed(data);
+}
+
+async function claimAedValidation({ aedId, photoName, metadata } = {}) {
+  if (!client || !session?.user || !aedId) return null;
+  const payload = {
+    aed_id: String(aedId),
+    user_id: session.user.id,
+    validator_name: displayNameFor(profile, session.user.email),
+    photo_name: typeof photoName === "string" ? photoName.slice(0, 80) : "",
+    metadata: metadata && typeof metadata === "object" ? metadata : {}
+  };
+  const { data, error } = await client
+    .from("aed_validations")
+    .insert(payload)
+    .select("aed_id,user_id,validator_name,photo_name,validated_at")
+    .maybeSingle();
+  if (error) {
+    if (error.code === "23505") {
+      const duplicate = new Error("Ce DAE est deja valide par un autre utilisateur.");
+      duplicate.code = "AED_ALREADY_VALIDATED";
+      throw duplicate;
+    }
+    throw error;
+  }
+  return normalizeRemoteValidation(data);
+}
+
+async function loadLeaderboard() {
+  if (!client || !session?.user) return [];
+  const { data, error } = await client
+    .from("leaderboard_top5")
+    .select("user_id,display_name,score,validated_count,updated_at")
+    .order("score", { ascending: false })
+    .order("validated_count", { ascending: false })
+    .limit(5);
+  if (error) throw error;
+  return data || [];
+}
+
 async function loadGameState() {
   if (!client || !session?.user) return null;
   const { data, error } = await client
@@ -226,14 +348,24 @@ async function refreshAdmin() {
   if (refs.adminSummary) refs.adminSummary.textContent = "Chargement...";
   if (refs.adminList) refs.adminList.innerHTML = "";
 
-  const [{ data: profiles, error: profilesError }, { data: states, error: statesError }] = await Promise.all([
+  const [
+    { data: profiles, error: profilesError },
+    { data: states, error: statesError },
+    { data: validations, error: validationsError }
+  ] = await Promise.all([
     client.from("profiles").select("id,email,display_name,role,created_at").order("created_at", { ascending: false }),
-    client.from("game_states").select("user_id,score,verified_ids,updated_at")
+    client.from("game_states").select("user_id,score,verified_ids,updated_at"),
+    client.from("aed_validations").select("user_id,aed_id")
   ]);
   if (profilesError) throw profilesError;
   if (statesError) throw statesError;
+  if (validationsError) throw validationsError;
 
   const statesByUser = new Map((states || []).map(item => [item.user_id, item]));
+  const validationCounts = new Map();
+  (validations || []).forEach(item => {
+    validationCounts.set(item.user_id, (validationCounts.get(item.user_id) || 0) + 1);
+  });
   const items = profiles || [];
   if (refs.adminSummary) {
     refs.adminSummary.textContent = `${items.length} compte${items.length > 1 ? "s" : ""} - roles ${isSuperAdmin() ? "modifiables" : "lecture seule"}`;
@@ -253,7 +385,7 @@ async function refreshAdmin() {
       </div>
       <div class="admin-stats">
         <span>${Number(state.score) || 0} XP</span>
-        <span>${Array.isArray(state.verified_ids) ? state.verified_ids.length : 0} DAE</span>
+        <span>${validationCounts.get(item.id) || 0} DAE</span>
       </div>
       <select class="admin-role" ${isSuperAdmin() ? "" : "disabled"}>
         <option value="player">Joueur</option>
@@ -339,6 +471,11 @@ async function init() {
 
 window.CoeurGoAuth = Object.freeze({
   init,
+  loadAedCatalog,
+  loadAedValidations,
+  createCustomAed,
+  claimAedValidation,
+  loadLeaderboard,
   loadGameState,
   saveGameState,
   recordScoreEvent,

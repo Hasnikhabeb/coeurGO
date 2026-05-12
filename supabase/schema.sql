@@ -20,6 +20,33 @@ create table if not exists public.game_states (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.aeds (
+  id text primary key,
+  lat double precision not null,
+  lng double precision not null,
+  name text not null,
+  address text,
+  city text,
+  postcode text,
+  validation_status text,
+  validation_label text,
+  function_state text,
+  source_label text,
+  is_custom boolean not null default false,
+  created_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.aed_validations (
+  aed_id text primary key references public.aeds(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  validator_name text,
+  photo_name text,
+  metadata jsonb not null default '{}'::jsonb,
+  validated_at timestamptz not null default now()
+);
+
 create table if not exists public.score_events (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -48,6 +75,11 @@ for each row execute function public.touch_updated_at();
 drop trigger if exists game_states_touch_updated_at on public.game_states;
 create trigger game_states_touch_updated_at
 before update on public.game_states
+for each row execute function public.touch_updated_at();
+
+drop trigger if exists aeds_touch_updated_at on public.aeds;
+create trigger aeds_touch_updated_at
+before update on public.aeds
 for each row execute function public.touch_updated_at();
 
 create or replace function public.current_profile_role()
@@ -155,6 +187,8 @@ $$;
 
 alter table public.profiles enable row level security;
 alter table public.game_states enable row level security;
+alter table public.aeds enable row level security;
+alter table public.aed_validations enable row level security;
 alter table public.score_events enable row level security;
 
 drop policy if exists "profiles_select_self_or_admin" on public.profiles;
@@ -189,6 +223,37 @@ on public.game_states for update
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+drop policy if exists "aeds_select_authenticated" on public.aeds;
+create policy "aeds_select_authenticated"
+on public.aeds for select
+to authenticated
+using (true);
+
+drop policy if exists "aeds_insert_custom_self" on public.aeds;
+create policy "aeds_insert_custom_self"
+on public.aeds for insert
+to authenticated
+with check (is_custom = true and created_by = auth.uid());
+
+drop policy if exists "aeds_update_admin" on public.aeds;
+create policy "aeds_update_admin"
+on public.aeds for update
+to authenticated
+using (public.is_admin())
+with check (public.is_admin());
+
+drop policy if exists "aed_validations_select_authenticated" on public.aed_validations;
+create policy "aed_validations_select_authenticated"
+on public.aed_validations for select
+to authenticated
+using (true);
+
+drop policy if exists "aed_validations_insert_self" on public.aed_validations;
+create policy "aed_validations_insert_self"
+on public.aed_validations for insert
+to authenticated
+with check (auth.uid() = user_id);
+
 drop policy if exists "score_events_select_self_or_admin" on public.score_events;
 create policy "score_events_select_self_or_admin"
 on public.score_events for select
@@ -198,6 +263,29 @@ drop policy if exists "score_events_insert_self" on public.score_events;
 create policy "score_events_insert_self"
 on public.score_events for insert
 with check (auth.uid() = user_id);
+
+grant select, insert on public.aeds to authenticated;
+grant update on public.aeds to authenticated;
+grant select, insert on public.aed_validations to authenticated;
+
+create or replace view public.leaderboard_top5 as
+select
+  p.id as user_id,
+  coalesce(nullif(p.display_name, ''), split_part(coalesce(p.email, ''), '@', 1), 'Joueur') as display_name,
+  coalesce(gs.score, 0) as score,
+  coalesce(count(av.aed_id), 0)::integer as validated_count,
+  greatest(
+    coalesce(gs.updated_at, p.updated_at, p.created_at),
+    coalesce(max(av.validated_at), p.updated_at, p.created_at)
+  ) as updated_at
+from public.profiles p
+left join public.game_states gs on gs.user_id = p.id
+left join public.aed_validations av on av.user_id = p.id
+group by p.id, p.display_name, p.email, p.created_at, p.updated_at, gs.score, gs.updated_at
+order by coalesce(gs.score, 0) desc, coalesce(count(av.aed_id), 0) desc, updated_at asc
+limit 5;
+
+grant select on public.leaderboard_top5 to authenticated;
 
 -- Apres la premiere inscription, designer le premier super admin avec :
 -- update public.profiles set role = 'super_admin' where email = 'votre-email@example.com';

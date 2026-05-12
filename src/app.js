@@ -8,6 +8,7 @@ const STORE_STATE_KEYS = [
   "aeds",
   "aedById",
   "verifiedIds",
+  "validationDetails",
   "photoNames",
   "score",
   "missionStep",
@@ -105,6 +106,10 @@ const addDaeBtn = document.getElementById("addDaeBtn");
 const photoBtn = document.getElementById("photoBtn");
 const gpsBtn = document.getElementById("gpsBtn");
 const gpsDistance = document.getElementById("gpsDistance");
+const leaderboardBtn = document.getElementById("leaderboardBtn");
+const leaderboardPanel = document.getElementById("leaderboardPanel");
+const leaderboardCloseBtn = document.getElementById("leaderboardCloseBtn");
+const leaderboardList = document.getElementById("leaderboardList");
 const topbar = document.querySelector(".topbar");
 const panel = document.querySelector(".panel");
 const checklistOverlay = document.getElementById("checklistOverlay");
@@ -1183,6 +1188,16 @@ function isVerified(aedOrId) {
   return Boolean(id) && verifiedIds.has(id);
 }
 
+function getValidationDetail(aedOrId) {
+  const id = typeof aedOrId === "string" ? aedOrId : aedOrId && aedOrId.id;
+  return id ? validationDetails.get(id) || null : null;
+}
+
+function validatorLabelFor(aedOrId) {
+  const detail = getValidationDetail(aedOrId);
+  return detail?.validatorName ? ` par ${detail.validatorName}` : "";
+}
+
 function getPendingCount() {
   return Math.max(0, aeds.length - verifiedIds.size);
 }
@@ -1231,6 +1246,65 @@ function appendCustomAeds(items) {
   }
 }
 
+function applyRemoteCatalog(items) {
+  if (!Array.isArray(items) || !items.length) {
+    return false;
+  }
+  const normalised = [];
+  for (let index = 0; index < items.length; index += 1) {
+    const item = normaliseCatalogAed({ ...items[index] }, index);
+    if (item && isVernonAreaAed(item)) {
+      normalised.push(item);
+    }
+  }
+  if (!normalised.length) {
+    return false;
+  }
+  markerLayers.forEach(marker => map.removeLayer(marker));
+  markerLayers.clear();
+  aeds = normalised;
+  aedById = new Map(aeds.map(aed => [aed.id, aed]));
+  if (currentAEDId && !aedById.has(currentAEDId)) {
+    currentAEDId = null;
+    missionStep = 0;
+    pendingPhotoAEDId = null;
+  }
+  return true;
+}
+
+function applyRemoteValidations(items) {
+  if (!Array.isArray(items)) {
+    return false;
+  }
+  validationDetails = new Map();
+  verifiedIds = new Set();
+  photoNames = Object.create(null);
+  for (const raw of items) {
+    const id = String(raw.aedId || raw.aed_id || "");
+    if (!id || !aedById.has(id)) {
+      continue;
+    }
+    const detail = {
+      aedId: id,
+      userId: raw.userId || raw.user_id || "",
+      validatorName: repairText(raw.validatorName || raw.validator_name || "Utilisateur"),
+      photoName: raw.photoName || raw.photo_name || "",
+      validatedAt: raw.validatedAt || raw.validated_at || ""
+    };
+    verifiedIds.add(id);
+    validationDetails.set(id, detail);
+    if (detail.photoName) {
+      photoNames[id] = String(detail.photoName).slice(0, 80);
+    }
+  }
+  if (currentAEDId && verifiedIds.has(currentAEDId)) {
+    currentAEDId = null;
+    missionStep = 0;
+    pendingPhotoAEDId = null;
+  }
+  return true;
+}
+
 function getCustomAedSnapshot() {
   return aeds
     .filter(aed => aed.isCustom)
@@ -1268,8 +1342,8 @@ function removeCustomAedsFromCatalog() {
 }
 
 function resetGameStateValues() {
-  removeCustomAedsFromCatalog();
   verifiedIds = new Set();
+  validationDetails = new Map();
   photoNames = Object.create(null);
   score = 0;
   missionStep = 0;
@@ -1335,6 +1409,32 @@ function refreshGameUiAfterHydration() {
   renderTrophyCatalog();
 }
 
+async function refreshCloudValidations() {
+  const auth = window.CoeurGoAuth;
+  if (!auth?.loadAedValidations || !auth.isReady?.()) {
+    return false;
+  }
+  const remoteValidations = await auth.loadAedValidations();
+  const applied = applyRemoteValidations(remoteValidations);
+  if (applied) {
+    refreshGameUiAfterHydration();
+  }
+  return applied;
+}
+
+async function persistCustomAed(aed) {
+  const auth = window.CoeurGoAuth;
+  if (!auth?.createCustomAed || !auth.isReady?.()) {
+    return null;
+  }
+  try {
+    return await auth.createCustomAed(aed);
+  } catch (error) {
+    showStatus("DAE ajoute en local. Synchronisation Supabase a reessayer plus tard.", "info");
+    return null;
+  }
+}
+
 async function hydrateCloudGameState() {
   const auth = window.CoeurGoAuth;
   if (!auth?.loadGameState) {
@@ -1342,11 +1442,18 @@ async function hydrateCloudGameState() {
   }
   cloudHydrating = true;
   try {
+    const remoteCatalog = auth.loadAedCatalog ? await auth.loadAedCatalog() : null;
+    if (remoteCatalog?.aeds?.length) {
+      applyRemoteCatalog(remoteCatalog.aeds);
+    }
     const remoteState = await auth.loadGameState();
     if (remoteState && applyGameStateSnapshot(remoteState)) {
       safeSetStorage(GAME_STORAGE_KEY, JSON.stringify(buildGameStateSnapshot()));
-      refreshGameUiAfterHydration();
     }
+    if (remoteCatalog?.validations) {
+      applyRemoteValidations(remoteCatalog.validations);
+    }
+    refreshGameUiAfterHydration();
     cloudSyncReady = Boolean(auth.isReady?.());
   } catch (error) {
     showStatus("Synchronisation du compte indisponible. Le mode local reste actif.", "info");
@@ -1436,7 +1543,7 @@ function markerStyleFor(aed) {
 
 function markerLabelFor(aed) {
   const markerState = getMarkerState(aed);
-  return `${escapeHtml(aed.name)} - ${escapeHtml(aed.city)} - ${escapeHtml(markerState.label)}`;
+  return `${escapeHtml(aed.name)} - ${escapeHtml(aed.city)} - ${escapeHtml(markerState.label)}${escapeHtml(validatorLabelFor(aed))}`;
 }
 
 function getViewportCandidates() {
@@ -1507,7 +1614,7 @@ function handleMapClick(event) {
   }
   pendingCustomDaeLocation = null;
   if (isVerified(targetAED)) {
-    showStatus(`${targetAED.name} est deja valide.`, "info");
+    showStatus(`${targetAED.name} est deja valide${validatorLabelFor(targetAED)}.`, "info");
     return;
   }
   selectAED(targetAED, true);
@@ -1580,6 +1687,7 @@ function addMissingDae() {
   updateMissionCard();
   updateActionButtons();
   saveGameState();
+  persistCustomAed(customAED);
   map.flyTo([customAED.lat, customAED.lng], Math.max(map.getZoom(), 15), { duration: 0.45 });
   showStatus(currentAED
     ? "Nouveau DAE ajoute sur la carte sans interrompre ta mission."
@@ -2204,10 +2312,57 @@ function closeChecklist() {
   refreshAssistantPrimary("proactive");
 }
 
+function renderLeaderboard(items) {
+  if (!leaderboardList) return;
+  if (!Array.isArray(items) || !items.length) {
+    leaderboardList.innerHTML = `<div class="leaderboard-empty">Aucun score synchronise pour le moment.</div>`;
+    return;
+  }
+  leaderboardList.innerHTML = items.slice(0, 5).map((item, index) => {
+    const rank = index + 1;
+    const name = escapeHtml(repairText(item.display_name || "Joueur"));
+    const scoreValue = Number(item.score) || 0;
+    const validationCount = Number(item.validated_count) || 0;
+    return `
+      <div class="leaderboard-row">
+        <div class="leaderboard-rank">${rank}</div>
+        <div class="leaderboard-player">
+          <strong>${name}</strong>
+          <span>${validationCount} DAE valide${validationCount > 1 ? "s" : ""}</span>
+        </div>
+        <div class="leaderboard-score">${scoreValue} XP</div>
+      </div>
+    `;
+  }).join("");
+}
+
+async function openLeaderboard() {
+  if (!leaderboardPanel) return;
+  leaderboardPanel.hidden = false;
+  leaderboardPanel.classList.add("is-open");
+  if (leaderboardList) {
+    leaderboardList.innerHTML = `<div class="leaderboard-empty">Chargement...</div>`;
+  }
+  try {
+    const rows = await window.CoeurGoAuth?.loadLeaderboard?.();
+    renderLeaderboard(rows || []);
+  } catch (error) {
+    if (leaderboardList) {
+      leaderboardList.innerHTML = `<div class="leaderboard-empty">Classement indisponible.</div>`;
+    }
+  }
+}
+
+function closeLeaderboard() {
+  if (!leaderboardPanel) return;
+  leaderboardPanel.classList.remove("is-open");
+  leaderboardPanel.hidden = true;
+}
+
 function selectAED(aed, shouldFocus = false) {
   if (!aed) return;
   if (isVerified(aed)) {
-    showStatus(`${aed.name} est deja valide.`, "info");
+    showStatus(`${aed.name} est deja valide${validatorLabelFor(aed)}.`, "info");
     return;
   }
   const isNewMission = currentAEDId !== aed.id;
@@ -2370,7 +2525,7 @@ async function handlePhotoWithDaeAi(file) {
     const analysis = await analysePhotoWithDaeAi(file);
     if (analysis.verdict === "confirm") {
       flashScreen("success");
-      finalizePhotoValidation(file, { aiConfirmed: true });
+      await finalizePhotoValidation(file, { aiConfirmed: true });
       return;
     }
     if (analysis.verdict === "reject") {
@@ -2384,13 +2539,36 @@ async function handlePhotoWithDaeAi(file) {
   }
 }
 
-function finalizePhotoValidation(file, { aiConfirmed = false } = {}) {
+async function finalizePhotoValidation(file, { aiConfirmed = false } = {}) {
   const currentAED = aedById.get(pendingPhotoAEDId) || getCurrentAED();
   if (!file || !currentAED || isVerified(currentAED)) {
     pendingPhotoAEDId = null;
     return;
   }
+  let cloudValidation = null;
+  if (window.CoeurGoAuth?.claimAedValidation && window.CoeurGoAuth.isReady?.()) {
+    try {
+      cloudValidation = await window.CoeurGoAuth.claimAedValidation({
+        aedId: currentAED.id,
+        photoName: typeof file.name === "string" ? file.name.slice(0, 80) : "photo-terrain.jpg",
+        metadata: { aiConfirmed }
+      });
+    } catch (error) {
+      if (error?.code === "AED_ALREADY_VALIDATED") {
+        await refreshCloudValidations().catch(() => {});
+        pendingPhotoAEDId = null;
+        showStatus("Ce DAE vient deja d'etre valide par un autre utilisateur.", "info");
+        selectNextAED();
+        return;
+      }
+      showStatus("Validation Supabase impossible pour le moment. Reessaie dans un instant.", "error");
+      return;
+    }
+  }
   verifiedIds.add(currentAED.id);
+  if (cloudValidation) {
+    validationDetails.set(currentAED.id, cloudValidation);
+  }
   photoNames[currentAED.id] = typeof file.name === "string" ? file.name.slice(0, 80) : "photo-terrain.jpg";
   score += 20;
   recordScoreEvent("photo", 20, currentAED.id, { aiConfirmed });
@@ -2408,6 +2586,7 @@ function finalizePhotoValidation(file, { aiConfirmed = false } = {}) {
 
 function resetGame() {
   verifiedIds = new Set();
+  validationDetails = new Map();
   photoNames = Object.create(null);
   score = 0;
   missionStep = 0;
@@ -2445,6 +2624,9 @@ function registerInteractionEvents() {
       closeTrophyCatalogBtn,
       findBtn,
       gpsBtn,
+      leaderboardBtn,
+      leaderboardCloseBtn,
+      leaderboardPanel,
       levelReward,
       photoBtn,
       photoInput,
@@ -2456,6 +2638,7 @@ function registerInteractionEvents() {
       askAssistant,
       checkAED,
       closeChecklist,
+      closeLeaderboard,
       closeTrophyCatalog,
       findAED,
       fitToVernon,
@@ -2466,6 +2649,7 @@ function registerInteractionEvents() {
       locatePlayer,
       maybeTriggerAssistantIdle,
       noteAssistantInteraction,
+      openLeaderboard,
       openTrophyCatalog,
       photoAED,
       queueVisibleMarkersRefresh,

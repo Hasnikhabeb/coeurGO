@@ -41,6 +41,7 @@
     <div class="logo" aria-label="Logo CoeurGo dynamique"><div class="logo-title-row"><span class="logo-dynamic-text">CoeurGo</span><span class="logo-version" aria-label="Version en cours de synchronisation">v...</span></div><small id="logoUpdateDate">verification GitHub...</small></div>
     <div class="session-bar" id="sessionBar" hidden>
       <span class="session-name" id="sessionName">Invite</span>
+      <button class="session-btn" id="leaderboardBtn" type="button">Top 5</button>
       <button class="session-btn" id="adminPanelBtn" type="button" hidden>Admin</button>
       <button class="session-btn" id="logoutBtn" type="button">Sortir</button>
     </div>
@@ -180,6 +181,19 @@
     </div>
     <div class="admin-summary" id="adminSummary">Chargement...</div>
     <div class="admin-list" id="adminList"></div>
+  </div>
+</div>
+
+<div class="leaderboard-panel" id="leaderboardPanel" hidden>
+  <div class="leaderboard-card" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
+    <div class="leaderboard-head">
+      <div>
+        <div class="leaderboard-kicker">Classement</div>
+        <div class="leaderboard-title" id="leaderboardTitle">Top 5 joueurs</div>
+      </div>
+      <button class="leaderboard-close" id="leaderboardCloseBtn" type="button" aria-label="Fermer le classement">x</button>
+    </div>
+    <div class="leaderboard-list" id="leaderboardList"></div>
   </div>
 </div>
 

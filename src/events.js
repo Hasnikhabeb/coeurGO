@@ -82,9 +82,11 @@
     addDomListener(cleanups, refs.addDaeBtn, "click", actions.handleAddDaeAction);
     addDomListener(cleanups, refs.photoBtn, "click", actions.photoAED);
     addDomListener(cleanups, refs.gpsBtn, "click", actions.locatePlayer);
+    addDomListener(cleanups, refs.leaderboardBtn, "click", actions.openLeaderboard);
     addDomListener(cleanups, refs.playerTrophyBadge, "click", actions.openTrophyCatalog);
     addDomListener(cleanups, refs.levelReward, "click", actions.openTrophyCatalog);
     addDomListener(cleanups, refs.closeChecklistBtn, "click", actions.closeChecklist);
+    addDomListener(cleanups, refs.leaderboardCloseBtn, "click", actions.closeLeaderboard);
     addDomListener(cleanups, refs.validateChecklistBtn, "click", actions.validateChecklist);
     addDomListener(cleanups, refs.closeTrophyCatalogBtn, "click", actions.closeTrophyCatalog);
     addDomListener(
@@ -98,6 +100,12 @@
       refs.trophyCatalogOverlay,
       "click",
       createOverlayDismissHandler(refs.trophyCatalogOverlay, actions.closeTrophyCatalog)
+    );
+    addDomListener(
+      cleanups,
+      refs.leaderboardPanel,
+      "click",
+      createOverlayDismissHandler(refs.leaderboardPanel, actions.closeLeaderboard)
     );
     addDomListener(cleanups, refs.photoInput, "change", createPhotoInputHandler(actions));
 
