@@ -2303,6 +2303,8 @@ function resetChecklist() {
   });
   validateChecklistBtn.disabled = true;
   validateChecklistBtn.classList.remove("is-ready");
+  validateChecklistBtn.classList.remove("is-loading");
+  validateChecklistBtn.textContent = "Valider";
   checklistFooterStatus.textContent = `0/${checklistItems.length} confirmes`;
 }
 
@@ -2311,6 +2313,8 @@ function updateChecklistState() {
   const hasAnyChecked = checkedCount > 0;
   validateChecklistBtn.disabled = !hasAnyChecked;
   validateChecklistBtn.classList.toggle("is-ready", hasAnyChecked);
+  validateChecklistBtn.classList.remove("is-loading");
+  validateChecklistBtn.textContent = "Valider";
   checklistFooterStatus.textContent = `${checkedCount}/${checklistItems.length} confirmes`;
   refreshAssistantPrimary("proactive");
 }
@@ -2488,14 +2492,15 @@ async function claimCurrentAedValidation(currentAED, checkedCount) {
   if (!window.CoeurGoAuth?.claimAedValidation || !window.CoeurGoAuth.isReady?.()) {
     return null;
   }
+  const claimPayload = {
+    aedId: currentAED.id,
+    metadata: {
+      checkedCount,
+      photoRequired: false
+    }
+  };
   try {
-    return await window.CoeurGoAuth.claimAedValidation({
-      aedId: currentAED.id,
-      metadata: {
-        checkedCount,
-        photoRequired: false
-      }
-    });
+    return await window.CoeurGoAuth.claimAedValidation(claimPayload);
   } catch (error) {
     if (error?.code === "AED_ALREADY_VALIDATED") {
       await refreshCloudValidations().catch(() => {});
@@ -2504,7 +2509,22 @@ async function claimCurrentAedValidation(currentAED, checkedCount) {
       selectNextAED();
       return false;
     }
-    showStatus("Validation Supabase impossible pour le moment. Reessaie dans un instant.", "error");
+    if (error?.code === "23503" && window.CoeurGoAuth?.createCustomAed) {
+      try {
+        showStatus("Synchronisation du DAE avec Supabase...", "info");
+        await window.CoeurGoAuth.createCustomAed(currentAED);
+        return await window.CoeurGoAuth.claimAedValidation(claimPayload);
+      } catch (retryError) {
+        if (retryError?.code === "AED_ALREADY_VALIDATED") {
+          await refreshCloudValidations().catch(() => {});
+          closeChecklist();
+          showStatus("Ce DAE vient deja d'etre valide par un autre utilisateur.", "info");
+          selectNextAED();
+          return false;
+        }
+      }
+    }
+    showStatus("Validation Supabase impossible. Verifie que le schema et le seed DAE sont bien appliques.", "error");
     return false;
   }
 }
@@ -2521,6 +2541,9 @@ async function validateChecklist() {
     return;
   }
   validateChecklistBtn.disabled = true;
+  validateChecklistBtn.classList.add("is-loading");
+  validateChecklistBtn.textContent = "Validation...";
+  showStatus("Validation du DAE en cours...", "info");
   const cloudValidation = await claimCurrentAedValidation(currentAED, checkedCount);
   if (cloudValidation === false) {
     updateChecklistState();

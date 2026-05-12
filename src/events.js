@@ -69,6 +69,15 @@
     };
   }
 
+  function createSafeActionHandler(action) {
+    return function handleSafeAction(event) {
+      const result = action(event);
+      if (result && typeof result.catch === "function") {
+        result.catch(() => {});
+      }
+    };
+  }
+
   function registerAppEvents(context) {
     const cleanups = [];
     const hostWindow = context.hostWindow || global;
@@ -87,7 +96,7 @@
     addDomListener(cleanups, refs.levelReward, "click", actions.openTrophyCatalog);
     addDomListener(cleanups, refs.closeChecklistBtn, "click", actions.closeChecklist);
     addDomListener(cleanups, refs.leaderboardCloseBtn, "click", actions.closeLeaderboard);
-    addDomListener(cleanups, refs.validateChecklistBtn, "click", actions.validateChecklist);
+    addDomListener(cleanups, refs.validateChecklistBtn, "click", createSafeActionHandler(actions.validateChecklist));
     addDomListener(cleanups, refs.closeTrophyCatalogBtn, "click", actions.closeTrophyCatalog);
     addDomListener(
       cleanups,
