@@ -147,15 +147,23 @@ L.Icon.Default.mergeOptions({
   shadowUrl: LEAFLET_DEFAULT_SHADOW
 });
 
-const markerRenderer = L.canvas({ padding: 0.5 });
-const map = L.map("map", { preferCanvas: true, zoomControl: true });
-L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-  maxZoom: 20,
-  subdomains: "abcd",
-  attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-  updateWhenIdle: true,
-  keepBuffer: 4
-}).addTo(map);
+let markerRenderer = null;
+let map = null;
+
+function initializeMap() {
+  if (map) {
+    return;
+  }
+  markerRenderer = L.canvas({ padding: 0.5 });
+  map = L.map("map", { preferCanvas: true, zoomControl: true });
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    maxZoom: 20,
+    subdomains: "abcd",
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+    updateWhenIdle: true,
+    keepBuffer: 4
+  }).addTo(map);
+}
 
 function escapeHtml(value) {
   return String(repairText(value)).replace(/[&<>\"']/g, character => ({
@@ -1522,12 +1530,16 @@ function recordScoreEvent(action, points, aedId, metadata = {}) {
 async function initializeAuthSync() {
   const auth = window.CoeurGoAuth;
   if (!auth?.init) {
-    return;
+    return { enabled: false, session: null, profile: null };
   }
   try {
-    await auth.init();
+    return await auth.init();
   } catch (error) {
-    showStatus("Authentification Supabase non disponible pour le moment.", "info");
+    document.body.classList.remove("auth-pending");
+    document.body.classList.add("login-locked");
+    const overlay = document.getElementById("authOverlay");
+    if (overlay) overlay.hidden = false;
+    return { enabled: true, session: null, profile: null };
   }
 }
 
@@ -2693,28 +2705,49 @@ function registerInteractionEvents() {
   });
 }
 
+let appStarted = false;
+
+function startApp() {
+  if (appStarted) {
+    return;
+  }
+  appStarted = true;
+  initializeMap();
+  loadCatalog();
+  loadGameState();
+  setHeaderMode(window.innerWidth < 900 ? "mobile" : "desktop");
+  fitToVernon();
+  queueVisibleMarkersRefresh();
+  updateGpsButton();
+  updateScore();
+  updateMissionCard();
+  updateActionButtons();
+  normalizeVisibleUiText();
+  renderAssistantLog();
+  refreshAssistantPrimary("proactive");
+  updateClock();
+  registerInteractionEvents();
+  showStatus(`Mode Vernon pret. ${formatCount(aeds.length)} DAE charges.`, "info");
+}
+
 window.addEventListener("coeurgo:auth-session", () => {
+  startApp();
   hydrateCloudGameState();
 });
 window.addEventListener("coeurgo:auth-signout", () => {
   cloudSyncReady = false;
+  window.location.reload();
 });
 
-loadCatalog();
-loadGameState();
-setHeaderMode(window.innerWidth < 900 ? "mobile" : "desktop");
-fitToVernon();
-queueVisibleMarkersRefresh();
-updateGpsButton();
-updateScore();
-updateMissionCard();
-updateActionButtons();
-normalizeVisibleUiText();
-renderAssistantLog();
-refreshAssistantPrimary("proactive");
-updateClock();
-registerInteractionEvents();
-showStatus(`Mode Vernon pret. ${formatCount(aeds.length)} DAE charges.`, "info");
-initializeAuthSync();
+initializeAuthSync().then(result => {
+  if (!result?.enabled) {
+    startApp();
+    return;
+  }
+  if (result.session && !appStarted) {
+    startApp();
+    hydrateCloudGameState();
+  }
+});
 }
 })();

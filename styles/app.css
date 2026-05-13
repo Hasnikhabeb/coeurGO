@@ -686,7 +686,8 @@ body{
   --top-offset:184px;
   --bottom-offset:174px;
 }
-body.login-locked > :not(.login-overlay):not(script){filter:blur(10px) saturate(.78);pointer-events:none;user-select:none}
+body.auth-pending > :not(.login-overlay):not(script),
+body.login-locked > :not(.login-overlay):not(script){display:none!important;pointer-events:none!important;user-select:none}
 body.mobile-mode{--top-offset:206px;--bottom-offset:212px}
 .login-overlay{position:fixed;inset:0;z-index:11000;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,rgba(2,6,23,.82) 0%,rgba(2,6,23,.92) 100%);backdrop-filter:blur(18px)}
 .login-overlay[hidden]{display:none}

@@ -93,6 +93,7 @@ function setMode(nextMode) {
 
 function updateSessionUi() {
   const signedIn = Boolean(session?.user);
+  document.body.classList.remove("auth-pending");
   document.body.classList.toggle("login-locked", hasSupabaseConfig() && !signedIn);
   setHidden(refs.overlay, signedIn || !hasSupabaseConfig());
   setHidden(refs.sessionBar, !signedIn);
@@ -424,7 +425,7 @@ async function init() {
   initPromise = (async () => {
     setMode("login");
     if (!hasSupabaseConfig()) {
-      document.body.classList.remove("login-locked");
+      document.body.classList.remove("auth-pending", "login-locked");
       setHidden(refs.overlay, true);
       setHidden(refs.sessionBar, true);
       return { enabled: false, session: null, profile: null };
